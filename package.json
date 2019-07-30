@@ -1,6 +1,6 @@
 {
   "name": "@livelybone/vue-datepicker",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A vue datepicker, includes date, datetime, time",
   "main": "./lib/umd/index.js",
   "module": "./lib/es/index.js",
@@ -82,7 +82,7 @@
     "@livelybone/copy": "^2.5.4",
     "@livelybone/date-generator": "^3.2.1",
     "@livelybone/vue-popper": "^2.2.2",
-    "vue-scrollbar-live": "^5.1.4"
+    "vue-scrollbar-live": "^5.2.0"
   },
   "config": {
     "commitizen": {
