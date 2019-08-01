@@ -12,7 +12,7 @@ export default {
       default: true,
       type: Boolean,
     },
-    inputStyle: Object,
+    inputStyle: [String, Object],
     popperProps: Object,
     scrollbarProps: Object,
   },

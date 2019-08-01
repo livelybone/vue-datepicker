@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { VuePopperProps } from '@livelybone/vue-popper'
 import Vue from 'vue'
+import { VueScrollbarProps } from 'vue-scrollbar-live'
 
 declare class CommonProps extends Vue {
   /**
@@ -14,7 +16,7 @@ declare class CommonProps extends Vue {
   min?: string
   max?: string
   canEdit?: boolean
-  inputStyle?: Object
+  inputStyle?: CSSStyleDeclaration | string
   /**
    * Props of module [@livelybone/vue-popper](https://github.com/livelybone/vue-popper)
    *
@@ -24,19 +26,23 @@ declare class CommonProps extends Vue {
    *   arrowOffsetScaling: 1,
    *   popperOptions: {
    *     placement: 'bottom-start',
-   *     positionFixed: true,
-   *     // more options in https://popper.js.org
+   *     modifiers: {
+   *       preventOverflow: {
+   *         boundariesElement:
+   *           typeof document !== 'undefined' ? document.body : '',
+   *       },
+   *     },
    *   },
    * }
    * */
-  popperProps?: Object
+  popperProps?: VuePopperProps
   /**
    * Props of scrollbar, see [vue-scrollbar-live](https://github.com/livelybone/vue-scrollbar-live)
    *
    * Default to:
    * { isMobile: false, maxHeight: 200 }
    * */
-  scrollbarProps?: Object
+  scrollbarProps?: VueScrollbarProps
 }
 
 declare class Datepicker extends CommonProps {

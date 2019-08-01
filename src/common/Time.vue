@@ -12,10 +12,11 @@
     <scrollbar
       v-for="(rowItems, i) in pickerItems"
       class="row-item line"
-      :isMobile="$scrollbarProps.isMobile"
       :style="pickerItemStyle"
       :key="i"
+      :isMobile="$scrollbarProps.isMobile"
       :maxHeight="$scrollbarProps.maxHeight"
+      :marginToWrap="$scrollbarProps.marginToWrap"
       :scrollTo="scrollTo[i]"
     >
       <span

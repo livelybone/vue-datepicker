@@ -194,54 +194,19 @@ $picker-item-selected-before-height: size(2.4);
 /* scrollbar css */
 .scrollbar-wrap {
   .scrollbar {
+    width: size(0.4) !important;
+    border-radius: size(0.2) !important;
     background: #eee !important;
   }
 }
 
-/* popper css */
-@mixin pseudo($bg: $border, $direction: top, $borderWidth: $pseudoSize) {
-  position: absolute;
-  #{$direction}: -$pseudoSize;
-  width: 0;
-  height: 0;
-  border: $borderWidth solid transparent;
-
-  @if ($direction==top) {
-    border-top: 0;
-    border-bottom-color: $bg;
-  } @else if ($direction==bottom) {
-    border-bottom: 0;
-    border-top-color: $bg;
-  } @else if ($direction==left) {
-    border-left: 0;
-    border-right-color: $bg;
-  } @else if ($direction==right) {
-    border-right: 0;
-    border-left-color: $bg;
-  }
-}
-
 .vue-popper {
-  border: 1px solid rgba($border, 0.5);
-  border-radius: size(0.3);
-  background: $bg;
+  border-color: rgba($border, 0.5) !important;
 
-  @each $placement, $pos, $pseudoPos in (top, bottom, left), (bottom, top, left),
-    (left, right, top), (right, left, top)
-  {
-    &[x-placement^='#{$placement}'] {
-      margin-#{$pos}: size(1);
-
-      .arrow {
-        @include pseudo(rgba($border, 0.5), $pos);
-
-        &:before {
-          content: '';
-          @include pseudo($bg, $pos);
-          #{$pseudoPos}: -$pseudoSize;
-          #{$pos}: 1px;
-        }
-      }
-    }
+  &[x-placement^='bottom'] .arrow {
+    border-bottom-color: rgba($border, 0.5) !important;
+  }
+  &[x-placement^='top'] .arrow {
+    border-top-color: rgba($border, 0.5) !important;
   }
 }
