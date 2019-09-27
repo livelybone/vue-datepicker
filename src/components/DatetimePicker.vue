@@ -6,6 +6,7 @@
       :value="formattedDatetimeValue"
       :placeholder="placeholder"
       :readonly="!canEdit || isMobile"
+      :disabled="!canEdit"
       :style="inputStyle"
       @click="canEdit ? hide(false) : ''"
       @keyup.enter="inputEnter"
