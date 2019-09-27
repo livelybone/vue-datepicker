@@ -142,19 +142,22 @@ export default {
         : '23:59:59'
     },
     myValue() {
-      const {
-        year,
-        month,
-        date,
-        hour = '--',
-        minute = '--',
-        second = '--',
-      } = this.timeObj
-      const { fillTo } = DateGenerator
-      return `${fillTo(4, year)}-${fillTo(2, month)}-${fillTo(
-        2,
-        date,
-      )} ${fillTo(2, hour)}:${fillTo(2, minute)}:${fillTo(2, second)}`
+      if (this.timeObj && this.timeObj.date) {
+        const {
+          year,
+          month,
+          date,
+          hour = '--',
+          minute = '--',
+          second = '--',
+        } = this.timeObj
+        const { fillTo } = DateGenerator
+        return `${fillTo(4, year)}-${fillTo(2, month)}-${fillTo(
+          2,
+          date,
+        )} ${fillTo(2, hour)}:${fillTo(2, minute)}:${fillTo(2, second)}`
+      }
+      return ''
     },
   },
   methods: {
@@ -164,9 +167,6 @@ export default {
         date: this.parseInputDate(arr[0]),
         time: timeReg.test(arr[1]) ? arr[1] : '',
       }
-    },
-    fillTo(width, num) {
-      return DateGenerator.fillTo(width, num)
     },
     inputEnter(ev) {
       const { value } = ev.target

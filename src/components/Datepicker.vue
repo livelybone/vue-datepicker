@@ -89,9 +89,12 @@ export default {
       return `${tenYear * 10 + 1} - ${(tenYear + 1) * 10}`
     },
     myValue() {
-      const { year, month, date } = this.dateObj
-      const { fillTo } = DateGenerator
-      return `${fillTo(4, year)}-${fillTo(2, month)}-${fillTo(2, date)}`
+      if (this.dateObj && this.dateObj.date) {
+        const { year, month, date } = this.dateObj
+        const { fillTo } = DateGenerator
+        return `${fillTo(4, year)}-${fillTo(2, month)}-${fillTo(2, date)}`
+      }
+      return ''
     },
     minDate() {
       if (this.min && !dateReg.test(this.min)) {
