@@ -3,7 +3,7 @@
     <input
       class="vue-input"
       :id="id"
-      :value="value"
+      :value="formattedDateValue"
       :placeholder="placeholder"
       :readonly="!canEdit || isMobile"
       :style="inputStyle"
@@ -123,8 +123,11 @@ export default {
     blur(ev, isBlur = true) {
       const value = isBlur ? ev.target.value : ev
       if (value !== this.myValue) {
-        if (dateReg.test(value)) {
-          const date = DateGenerator.parseDate(value.match(dateReg)[1])
+        const parsedInputDate = this.parseInputDate(value)
+        if (dateReg.test(parsedInputDate)) {
+          const date = DateGenerator.parseDate(
+            parsedInputDate.match(dateReg)[1],
+          )
           if (
             dateCompare(date, this.minDate) &&
             dateCompare(date, this.maxDate, -1)
@@ -132,14 +135,10 @@ export default {
             this.dateObj = date
             if (isBlur) this.$emit('input', this.myValue)
           } else if (!isBlur) {
-            console.warn(
-              'vue-datepicker: Datepicker: prop value is out of range',
-            )
+            console.warn('vue-datepicker: Datepicker: value is out of range')
             this.$emit('input', '')
           }
         } else {
-          if (value)
-            console.warn('vue-datepicker: Datepicker: prop value is invalid')
           this.$emit('input', '')
         }
       } else {

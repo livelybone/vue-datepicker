@@ -3,7 +3,7 @@
     <input
       class="vue-input"
       :id="id"
-      :value="value"
+      :value="formattedDatetimeValue"
       :placeholder="placeholder"
       :readonly="!canEdit || isMobile"
       :style="inputStyle"
@@ -61,7 +61,6 @@
       <time-pin
         v-if="choseType === 'time'"
         :value="split(value).time"
-        :type="type"
         :scrollbarProps="scrollbarProps"
         :minTime="minTime"
         :maxTime="maxTime"
@@ -161,7 +160,7 @@ export default {
     split(val) {
       const arr = val ? val.split(/\s/) : []
       return {
-        date: dateReg.test(arr[0]) ? arr[0] : '',
+        date: this.parseInputDate(arr[0]),
         time: timeReg.test(arr[1]) ? arr[1] : '',
       }
     },
@@ -198,15 +197,11 @@ export default {
             if (isBlur) this.$emit('input', this.myValue)
           } else if (!isBlur) {
             console.warn(
-              'vue-datepicker: DatetimePicker: prop value is out of range',
+              'vue-datepicker: DatetimePicker: value is out of range',
             )
             this.$emit('input', '')
           }
         } else {
-          if (value)
-            console.warn(
-              'vue-datepicker: DatetimePicker: prop value is invalid',
-            )
           this.$emit('input', '')
         }
       } else {
