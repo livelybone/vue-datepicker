@@ -17,7 +17,7 @@ export default {
       default: true,
       type: Boolean,
     },
-    dateFormat: { String, default: 'YYYY-MM-DD' },
+    dateFormat: {type: String, default: 'YYYY-MM-DD' },
     inputStyle: [String, Object],
     popperProps: Object,
     scrollbarProps: Object,
