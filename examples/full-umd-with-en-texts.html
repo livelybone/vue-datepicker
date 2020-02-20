@@ -1,0 +1,368 @@
+<!-- courtesy of https://livelybone.github.io/vue/vue-datepicker/ -->
+<html>
+<head>
+<title>vue-datepicker-full-umd-with-en-texts</title>
+<style>
+
+html, body {
+   overflow-x: hidden;
+   max-width: 100%; 
+   font-family: Helvetica Neue, Arial, sans-serif;
+   scroll-behavior: smooth;
+	font-size: 7em; /* gotcha !!! MUST set a base font size otherwise have to zoom 400%*/
+}
+
+.datepicker, .timepicker, .datetime-picker {
+  position: relative
+}
+
+.datepicker *, .timepicker *, .datetime-picker * {
+  box-sizing: border-box;
+  font-size: .14rem;
+  color: #444;
+  outline: none !important
+}
+
+.datepicker .vue-input, .timepicker .vue-input, .datetime-picker .vue-input {
+  padding: 0 .1rem;
+  border: 1px solid #c2ccdc;
+  border-radius: .03rem
+}
+
+.datepicker .vue-input:focus, .timepicker .vue-input:focus, .datetime-picker .vue-input:focus {
+  border-color: rgba(57, 192, 134, 0.7);
+  box-shadow: 0 0 1px rgba(57, 192, 134, 0.3)
+}
+
+.datepicker .picker, .timepicker .picker, .datetime-picker .picker {
+  display: block;
+  z-index: 10000;
+  width: 3rem;
+  padding: .1rem;
+  box-shadow: 0 1px .1rem rgba(0, 0, 0, 0.1)
+}
+
+.datepicker .picker .picker-head, .timepicker .picker .picker-head, .datetime-picker .picker .picker-head {
+  padding: 0 0 .1rem;
+  text-align: center
+}
+
+.datepicker .picker .picker-head .picker-h span, .timepicker .picker .picker-head .picker-h span, .datetime-picker .picker .picker-head .picker-h span {
+  font-size: .16rem;
+}
+
+.datepicker .picker .picker-head .picker-h .year, .datepicker .picker .picker-head .picker-h .month, .datepicker .picker .picker-head .picker-h .date, .timepicker .picker .picker-head .picker-h .year, .timepicker .picker .picker-head .picker-h .month, .timepicker .picker .picker-head .picker-h .date, .datetime-picker .picker .picker-head .picker-h .year, .datetime-picker .picker .picker-head .picker-h .month, .datetime-picker .picker .picker-head .picker-h .date {
+  cursor: pointer
+}
+
+.datepicker .picker .picker-head .picker-h .year:hover, .datepicker .picker .picker-head .picker-h .month:hover, .datepicker .picker .picker-head .picker-h .date:hover, .timepicker .picker .picker-head .picker-h .year:hover, .timepicker .picker .picker-head .picker-h .month:hover, .timepicker .picker .picker-head .picker-h .date:hover, .datetime-picker .picker .picker-head .picker-h .year:hover, .datetime-picker .picker .picker-head .picker-h .month:hover, .datetime-picker .picker .picker-head .picker-h .date:hover {
+  color: #39c086
+}
+
+.datepicker .picker .picker-head .prev, .datepicker .picker .picker-head .next, .timepicker .picker .picker-head .prev, .timepicker .picker .picker-head .next, .datetime-picker .picker .picker-head .prev, .datetime-picker .picker .picker-head .next {
+  padding: 0 .05rem;
+  border: none;
+  background: transparent;
+  cursor: pointer
+}
+
+.datepicker .picker .picker-head .prev.disabled, .datepicker .picker .picker-head .next.disabled, .timepicker .picker .picker-head .prev.disabled, .timepicker .picker .picker-head .next.disabled, .datetime-picker .picker .picker-head .prev.disabled, .datetime-picker .picker .picker-head .next.disabled {
+  color: #ccc;
+  cursor: default
+}
+
+.datepicker .picker .picker-head .prev, .timepicker .picker .picker-head .prev, .datetime-picker .picker .picker-head .prev {
+  float: left
+}
+
+.datepicker .picker .picker-head .next, .timepicker .picker .picker-head .next, .datetime-picker .picker .picker-head .next {
+  float: right
+}
+
+.datepicker .picker .picker-items, .timepicker .picker .picker-items, .datetime-picker .picker .picker-items {
+  overflow: hidden
+}
+
+.datepicker .picker .picker-items .row-item, .timepicker .picker .picker-items .row-item, .datetime-picker .picker .picker-items .row-item {
+  line-height: .3rem;
+  overflow: hidden
+}
+
+.datepicker .picker .picker-items .row-item.h, .timepicker .picker .picker-items .row-item.h, .datetime-picker .picker .picker-items .row-item.h {
+  border-bottom: 1px solid #f3f5f8
+}
+
+.datepicker .picker .picker-items .row-item.h .item, .timepicker .picker .picker-items .row-item.h .item, .datetime-picker .picker .picker-items .row-item.h .item {
+  font-size: .12rem;
+  color: #999 !important
+}
+
+.datepicker .picker .picker-items .row-item.line, .timepicker .picker .picker-items .row-item.line, .datetime-picker .picker .picker-items .row-item.line {
+  display: block;
+  float: left
+}
+
+.datepicker .picker .picker-items .row-item.line .item, .timepicker .picker .picker-items .row-item.line .item, .datetime-picker .picker .picker-items .row-item.line .item {
+  width: 100%;
+  display: block
+}
+
+.datepicker .picker .picker-items .row-item .item, .timepicker .picker .picker-items .row-item .item, .datetime-picker .picker .picker-items .row-item .item {
+  display: inline-block;
+  line-height: inherit;
+  padding: 0 .08rem;
+  text-align: center;
+  cursor: pointer
+}
+
+.datepicker .picker .picker-items .row-item .item.date, .timepicker .picker .picker-items .row-item .item.date, .datetime-picker .picker .picker-items .row-item .item.date {
+  width: calc(100% / 7)
+}
+
+.datepicker .picker .picker-items .row-item .item.month, .datepicker .picker .picker-items .row-item .item.year, .timepicker .picker .picker-items .row-item .item.month, .timepicker .picker .picker-items .row-item .item.year, .datetime-picker .picker .picker-items .row-item .item.month, .datetime-picker .picker .picker-items .row-item .item.year {
+  width: calc(99% / 3)
+}
+
+.datepicker .picker .picker-items .row-item .item:hover, .timepicker .picker .picker-items .row-item .item:hover, .datetime-picker .picker .picker-items .row-item .item:hover {
+  color: #39c086
+}
+
+.datepicker .picker .picker-items .row-item .item.not-in-month, .datepicker .picker .picker-items .row-item .item.disabled, .timepicker .picker .picker-items .row-item .item.not-in-month, .timepicker .picker .picker-items .row-item .item.disabled, .datetime-picker .picker .picker-items .row-item .item.not-in-month, .datetime-picker .picker .picker-items .row-item .item.disabled {
+  color: #ccc !important
+}
+
+.datepicker .picker .picker-items .row-item .item.not-in-month:before, .datepicker .picker .picker-items .row-item .item.disabled:before, .timepicker .picker .picker-items .row-item .item.not-in-month:before, .timepicker .picker .picker-items .row-item .item.disabled:before, .datetime-picker .picker .picker-items .row-item .item.not-in-month:before, .datetime-picker .picker .picker-items .row-item .item.disabled:before {
+  content: none !important
+}
+
+.datepicker .picker .picker-items .row-item .item.disabled, .timepicker .picker .picker-items .row-item .item.disabled, .datetime-picker .picker .picker-items .row-item .item.disabled {
+  cursor: no-drop !important
+}
+
+.datepicker .picker .picker-items .row-item .item.selected, .timepicker .picker .picker-items .row-item .item.selected, .datetime-picker .picker .picker-items .row-item .item.selected {
+  position: relative;
+  color: #fff
+}
+
+.datepicker .picker .picker-items .row-item .item.selected:before, .timepicker .picker .picker-items .row-item .item.selected:before, .datetime-picker .picker .picker-items .row-item .item.selected:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  width: .4rem;
+  height: .24rem;
+  margin: -.12rem 0 0 -.2rem;
+  border-radius: .03rem;
+  background: #0a77d5;
+}
+
+.datepicker .picker .btns, .timepicker .picker .btns, .datetime-picker .picker .btns {
+  padding: .1rem 0 0;
+  border-top: 1px solid #f3f5f8;
+  overflow: hidden
+}
+
+.datepicker .picker .btns .btn, .timepicker .picker .btns .btn, .datetime-picker .picker .btns .btn {
+  float: right;
+  padding: 0 .04rem;
+  margin: 0 0 0 .1rem;
+  font-size: .12rem;
+  color: #39c086;
+  cursor: pointer
+}
+
+.scrollbar-wrap {
+  position: relative;
+  width: 100%;
+  padding: 0 !important;
+  overflow: hidden
+}
+
+.scrollbar-wrap:hover .scrollbar {
+  display: block
+}
+
+.scrollbar-wrap .scrollbar-content {
+  position: relative;
+  width: 100%;
+  height: auto
+}
+
+.scrollbar-wrap .scrollbar {
+  display: none;
+  position: absolute;
+  right: .04rem;
+  width: .04rem;
+  border-radius: .02rem;
+  background: #eee;
+  box-shadow: 0 0 .02rem rgba(0, 0, 0, 0.1);
+  cursor: default !important
+}
+
+.vue-popper {
+  border: 1px solid rgba(194, 204, 220, 0.5);
+  border-radius: .03rem;
+  background: #fff
+}
+
+.vue-popper[x-placement^=top] {
+  margin-bottom: .1rem
+}
+
+.vue-popper[x-placement^=top] .arrow {
+  position: absolute;
+  bottom: -.06rem;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-bottom: 0;
+  border-top-color: rgba(194, 204, 220, 0.5)
+}
+
+.vue-popper[x-placement^=top] .arrow:before {
+  content: '';
+  position: absolute;
+  bottom: -.06rem;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-bottom: 0;
+  border-top-color: #fff;
+  left: -.06rem;
+  bottom: 1px
+}
+
+.vue-popper[x-placement^=bottom] {
+  margin-top: .1rem
+}
+
+.vue-popper[x-placement^=bottom] .arrow {
+  position: absolute;
+  top: -.06rem;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-top: 0;
+  border-bottom-color: rgba(194, 204, 220, 0.5)
+}
+
+.vue-popper[x-placement^=bottom] .arrow:before {
+  content: '';
+  position: absolute;
+  top: -.06rem;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-top: 0;
+  border-bottom-color: #fff;
+  left: -.06rem;
+  top: 1px
+}
+
+.vue-popper[x-placement^=left] {
+  margin-right: .1rem
+}
+
+.vue-popper[x-placement^=left] .arrow {
+  position: absolute;
+  right: -.06rem;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-right: 0;
+  border-left-color: rgba(194, 204, 220, 0.5)
+}
+
+.vue-popper[x-placement^=left] .arrow:before {
+  content: '';
+  position: absolute;
+  right: -.06rem;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-right: 0;
+  border-left-color: #fff;
+  top: -.06rem;
+  right: 1px
+}
+
+.vue-popper[x-placement^=right] {
+  margin-left: .1rem
+}
+
+.vue-popper[x-placement^=right] .arrow {
+  position: absolute;
+  left: -.06rem;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-left: 0;
+  border-right-color: rgba(194, 204, 220, 0.5)
+}
+
+.vue-popper[x-placement^=right] .arrow:before {
+  content: '';
+  position: absolute;
+  left: -.06rem;
+  width: 0;
+  height: 0;
+  border: .06rem solid transparent;
+  border-left: 0;
+  border-right-color: #fff;
+  top: -.06rem;
+  left: 1px
+}
+
+</style>
+</head>
+<body>
+
+<div> 
+<input style="width: 100px" id="datetime-picker"></input>
+</div>
+      <script src="https://unpkg.com/vue@2.5.3/dist/vue.js"></script>
+		<script src="https://unpkg.com/@livelybone/vue-datepicker@3.1.0/lib/umd/index.js"></script>
+<script>
+
+var popperProps = {
+  popperOptions: {
+    modifiers: {
+      preventOverflow: {
+        padding: 20
+      }
+    }
+  }
+}
+new Vue({
+  el: '#datetime-picker',
+  template: '<datetime-picker type="second"' +
+  '                           :value="time"' +
+  '                           @input="log"' +
+  '                           min="2018-08-24 02:10:02"' +
+  '                           max="2020-09-1 22:10:00"' +
+  '                           :timeStr="timeStr"' +
+  '									:dayStr="dayStr"' +
+  '									:btnStr="btnStr"' +
+  '                           :scrollbarProps="{isMobile:true,maxHeight:\'2rem\'}"' +
+  '                           :popperProps="popperProps"/>',
+  data: function () {
+    return {
+      timeStr: ['hour', 'min', 'sec'],
+      time: '2019-02-01 01:02:01',
+      isM: true,
+		dayStr: ['mo','tu','we','th','fr','sa','su'],
+		btnStr: 'X',
+      popperProps: popperProps
+    }
+  },
+  methods: {
+    log: function (val) {
+      this.time = val
+    }
+  },
+  components: { 'datetime-picker': VueDatepicker.DatetimePicker }
+})
+</script>
+</body>
+</html>
