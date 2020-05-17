@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { VuePopperProps } from '@livelybone/vue-popper'
 import Vue from 'vue'
+import { GntCalendarOptions } from '@livelybone/date-generator'
+import { VuePopperProps } from '@livelybone/vue-popper'
 import { VueScrollbarProps } from 'vue-scrollbar-live'
 
 declare class CommonProps extends Vue {
@@ -8,15 +9,22 @@ declare class CommonProps extends Vue {
    * Id of input element
    * */
   id: string | number
+
   /**
    * value of component
    * */
   value: string
+
   placeholder?: string
+
   min?: string
+
   max?: string
+
   canEdit?: boolean
+
   inputStyle?: CSSStyleDeclaration | string
+
   /**
    * Props of module [@livelybone/vue-popper](https://github.com/livelybone/vue-popper)
    *
@@ -36,6 +44,7 @@ declare class CommonProps extends Vue {
    * }
    * */
   popperProps?: VuePopperProps
+
   /**
    * Props of scrollbar, see [vue-scrollbar-live](https://github.com/livelybone/vue-scrollbar-live)
    *
@@ -53,6 +62,8 @@ declare class Datepicker extends CommonProps {
    * ['日', '一', '二', '三', '四', '五', '六']
    * */
   dayStr: string[]
+
+  firstDayOfWeek: GntCalendarOptions['firstDayOfWeek']
 }
 
 declare class Timepicker extends CommonProps {
@@ -63,23 +74,27 @@ declare class Timepicker extends CommonProps {
    * ['时', '分', '秒']
    * */
   timeStr: string[]
+
   /**
    * Used to set text of button
    *
    * Default to:
    * '确定'
    * */
-  btnStr: string[]
+  btnStr: string
 }
 
 declare class DatetimePicker extends CommonProps {
   /**
-   * Used to set day name
+   * Used to set day name. Start with Sunday
    *
    * Default to:
    * ['日', '一', '二', '三', '四', '五', '六']
    * */
   dayStr: string[]
+
+  firstDayOfWeek: GntCalendarOptions['firstDayOfWeek']
+
   /**
    * Used to set time name
    *
@@ -87,13 +102,14 @@ declare class DatetimePicker extends CommonProps {
    * ['时', '分', '秒']
    * */
   timeStr: string[]
+
   /**
    * Used to set text of button
    *
    * Default to:
    * '确定'
    * */
-  btnStr: string[]
+  btnStr: string
 }
 
 export { Datepicker, Timepicker, DatetimePicker }

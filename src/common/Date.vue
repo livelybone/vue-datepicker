@@ -45,6 +45,10 @@ export default {
     minDate: String,
     maxDate: String,
     dayStr: Array,
+    firstDayOfWeek: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -58,11 +62,15 @@ export default {
       return /^(year|month|date|time)$/.test(this.type) ? this.type : 'date'
     },
     $dayStr() {
-      return !this.dayStr ||
+      const dayStr =
+        !this.dayStr ||
         this.dayStr.length < 7 ||
         this.dayStr.some(day => typeof day !== 'string')
-        ? ['日', '一', '二', '三', '四', '五', '六']
-        : this.dayStr.slice(0, 7)
+          ? ['日', '一', '二', '三', '四', '五', '六']
+          : this.dayStr.slice(0, 7)
+      return dayStr
+        .slice(this.firstDayOfWeek)
+        .concat(dayStr.slice(0, this.firstDayOfWeek))
     },
     minD() {
       return {
@@ -111,9 +119,10 @@ export default {
       })
     },
     dates() {
-      return DateGenerator.gntDate(this.year, this.month, {
+      return DateGenerator.gntCalendar(this, {
         min: this.minDate,
         max: this.maxDate,
+        firstDayOfWeek: this.firstDayOfWeek,
       })
     },
     pickerItems() {

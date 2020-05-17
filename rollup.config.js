@@ -7,13 +7,9 @@ import packageConf from './package.json'
 
 const baseConf = require('./rollup.config.base')
 
-const formats = ['es', 'umd']
+const isWatch = process.env.BUILD_ENV === 'watch'
 
-fs.copyFileSync(
-  path.resolve(__dirname, './src/css/index.scss'),
-  path.resolve(__dirname, './lib/css/index.scss'),
-)
-console.log('>> css file copy successful')
+const formats = ['es', 'umd']
 
 function getEntries() {
   const reg = /\.vue$/
@@ -34,7 +30,6 @@ function getEntries() {
 }
 
 const conf = entry => ({
-  ...baseConf,
   input: entry.filename,
   output: entry.formats.map(format => ({
     file: `./lib/${format}/${entry.name}.js`,
@@ -56,14 +51,24 @@ const conf = entry => ({
   ],
 })
 
-export default [
-  {
-    name: 'index',
-    filename: './src/index.js',
-    formats: ['es'],
-    needUglify: false,
-    external: true,
-  },
-  { name: 'index', filename: './src/index.js', formats: ['umd'] },
-  ...getEntries(),
-].map(conf)
+export default (isWatch
+  ? [
+      {
+        name: 'index',
+        filename: './src/index.ts',
+        formats: ['umd'],
+        needUglify: false,
+      },
+    ]
+  : [
+      {
+        name: 'index',
+        filename: './src/index.ts',
+        formats: ['es'],
+        needUglify: false,
+        external: true,
+      },
+      { name: 'index', filename: './src/index.ts', formats: ['umd'] },
+      ...getEntries(),
+    ]
+).map(conf)

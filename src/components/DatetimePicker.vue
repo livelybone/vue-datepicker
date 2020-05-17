@@ -1,16 +1,30 @@
 <template>
   <div class="datetime-picker" ref="wrap">
-    <input
-      class="vue-input"
-      :id="id"
-      :value="value"
-      :placeholder="placeholder"
-      :readonly="!canEdit || isMobile"
-      :style="inputStyle"
-      @click="canEdit ? hide(false) : ''"
-      @keyup.enter="inputEnter"
-      @blur="blur"
-    />
+    <div class="input-wrapper">
+      <div class="prefix">
+        <slot name="prefix">
+          <icon-date />
+        </slot>
+      </div>
+      <input
+        class="vue-input"
+        :id="id"
+        :value="value"
+        :placeholder="placeholder"
+        :readonly="!canEdit || isMobile"
+        :style="inputStyle"
+        @click="canEdit ? hide(false) : ''"
+        @keyup.enter="inputEnter"
+        @blur="blur"
+        @focus="focus"
+      />
+      <div class="suffix">
+        <slot name="suffix" />
+        <div class="icon-clear" @click="onClear">
+          <icon-del />
+        </div>
+      </div>
+    </div>
     <popper
       v-if="canEdit && showPicker"
       class="picker"
@@ -75,6 +89,7 @@
         :minDate="minDate"
         :maxDate="maxDate"
         :dayStr="dayStr"
+        :firstDayOfWeek="firstDayOfWeek"
         @chose="chose"
         @to="chose"
         @emitData="showBtn = $event.showBtn"
@@ -101,12 +116,14 @@ import Date from '../common/Date.vue'
 import mixin from '../common/mixin'
 import { timeCompare, timeReg } from '../common/time'
 import TimePin from '../common/Time.vue'
+import IconDate from '../common/IconDate.vue'
 
 export default {
   mixins: [mixin],
   name: 'DatetimePicker',
   props: {
     dayStr: Array,
+    firstDayOfWeek: Number,
     timeStr: Array,
     btnStr: String,
   },
@@ -143,9 +160,9 @@ export default {
     },
     myValue() {
       const {
-        year,
-        month,
-        date,
+        year = '0',
+        month = '1',
+        date = '1',
         hour = '--',
         minute = '--',
         second = '--',
@@ -177,6 +194,7 @@ export default {
       }
     },
     blur(ev, isBlur = true) {
+      this.isFocus = false
       const value = isBlur ? ev.target.value : ev
       if (value !== this.myValue) {
         const { date, time } = this.split(value)
@@ -188,8 +206,8 @@ export default {
             dateCompare(dateObj, this.maxDate, -1)
           if (
             (dateGt &&
-              (timeCompare(timeObj, this.minTime, 1, this.myType) &&
-                timeCompare(timeObj, this.maxTime, -1, this.myType))) ||
+              timeCompare(timeObj, this.minTime, 1, this.myType) &&
+              timeCompare(timeObj, this.maxTime, -1, this.myType)) ||
             (dateGt &&
               !dateCompare(dateObj, this.minDate, 0) &&
               !dateCompare(dateObj, this.maxDate, 0))
@@ -228,6 +246,6 @@ export default {
       this.$emit('input', this.myValue)
     },
   },
-  components: { TimePin, Date },
+  components: { TimePin, Date, IconDate },
 }
 </script>

@@ -23,25 +23,92 @@ $picker-item-selected-before-height: size(2.4);
 .timepicker,
 .datetime-picker {
   position: relative;
+  font-size: size(1.4);
+  color: $black;
+
+  /* scrollbar css */
+  .scrollbar-wrap {
+    .scrollbar {
+      width: size(0.4) !important;
+      border-radius: size(0.2) !important;
+      background: #eee !important;
+    }
+  }
+
+  /* vue-popper css */
+  .vue-popper {
+    border-color: rgba($border, 0.5) !important;
+
+    &[x-placement^='bottom'] .arrow {
+      border-bottom-color: rgba($border, 0.5) !important;
+    }
+    &[x-placement^='top'] .arrow {
+      border-top-color: rgba($border, 0.5) !important;
+    }
+  }
 
   * {
     box-sizing: border-box;
-    font-size: size(1.4);
-    color: $black;
     outline: none !important;
   }
 
-  .vue-input {
+  .input-wrapper {
+    display: flex;
+    align-items: center;
     width: 100%;
     height: 100%;
-    padding: 0 size(1);
     border: 1px solid $border;
     border-radius: size(0.3);
 
-    &:focus {
+    &.focus {
       border-color: rgba($main, 0.7);
       box-shadow: 0 0 1px rgba($main, 0.3);
     }
+
+    &.focus,
+    &:hover {
+      .icon-clear {
+        pointer-events: all;
+        opacity: 1;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .prefix,
+  .suffix {
+    display: flex;
+    align-items: center;
+    padding: 0 size(0.5);
+  }
+
+  .suffix {
+    padding-right: size(0.3);
+  }
+
+  .icon-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.1em;
+    font-size: 0.8em;
+    color: $black-light;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .icon-date,
+  .icon-time,
+  .icon-del {
+    width: 1em;
+    height: 1em;
+  }
+
+  .vue-input {
+    display: block;
+    height: 100%;
+    flex: 1;
+    border: none;
   }
 
   .picker {
@@ -188,25 +255,5 @@ $picker-item-selected-before-height: size(2.4);
         cursor: pointer;
       }
     }
-  }
-}
-
-/* scrollbar css */
-.scrollbar-wrap {
-  .scrollbar {
-    width: size(0.4) !important;
-    border-radius: size(0.2) !important;
-    background: #eee !important;
-  }
-}
-
-.vue-popper {
-  border-color: rgba($border, 0.5) !important;
-
-  &[x-placement^='bottom'] .arrow {
-    border-bottom-color: rgba($border, 0.5) !important;
-  }
-  &[x-placement^='top'] .arrow {
-    border-top-color: rgba($border, 0.5) !important;
   }
 }

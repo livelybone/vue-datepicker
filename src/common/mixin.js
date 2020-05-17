@@ -1,5 +1,6 @@
 import { objectDeepMerge } from '@livelybone/copy'
 import VuePopper from '@livelybone/vue-popper'
+import IconDel from './IconDel'
 
 export default {
   props: {
@@ -18,6 +19,7 @@ export default {
   },
   data() {
     return {
+      isFocus: false,
       showPicker: false,
       defaultPopperProps: Object.freeze({
         arrowPosition: 'start',
@@ -60,8 +62,14 @@ export default {
         this.choseType = val
       })
     },
+    focus() {
+      this.isFocus = true
+    },
+    onClear() {
+      this.blur({ target: { value: '' } })
+    },
   },
-  components: { popper: VuePopper },
+  components: { popper: VuePopper, IconDel },
   beforeMount() {
     this.blur(this.value, false)
     window.addEventListener('click', this.hide)

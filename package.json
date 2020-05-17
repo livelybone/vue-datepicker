@@ -1,7 +1,7 @@
 {
   "name": "@livelybone/vue-datepicker",
   "version": "3.1.1",
-  "description": "A vue datepicker, includes date, datetime, time",
+  "description": "A vue component of datepicker, includes DatePicker, DatetimePicker, DateRangePicker, TimePicker",
   "main": "./lib/umd/index.js",
   "module": "./lib/es/index.js",
   "unpkg": "./lib/umd/index.js",
@@ -9,10 +9,11 @@
   "scss_path": "./lib/css/index.scss",
   "types": "./index.d.ts",
   "scripts": {
-    "watch:css": "node-sass -w ./src/css/index.scss ./lib/css/index.css",
-    "build:css": "cross-env NODE_ENV=production node-sass ./src/css/index.scss ./lib/css/index.css --output-style compressed",
-    "build": "rimraf ./lib && npm run build:css && cross-env NODE_ENV=production rollup -c",
-    "eslint": "eslint ./ --ext .vue,.js --fix",
+    "build:css": "cross-env NODE_ENV=production node-sass ./src/css/index.scss ./lib/css/index.css --output-style compressed && ncp ./src/css ./lib/css",
+    "build:js": "cross-env NODE_ENV=production rollup -c",
+    "dev": "rimraf ./lib && cross-env BUILD_ENV=watch node watch.js",
+    "build": "rimraf ./lib && npm run build:css && npm run build:js",
+    "eslint": "eslint ./ --ext .vue,.ts,.js --fix",
     "test": "cross-env BABEL_ENV=test karma start --single-run",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "commit": "git-cz"
@@ -22,31 +23,36 @@
     "url": "https://github.com/livelybone/vue-datepicker.git"
   },
   "keywords": [
-    "vue",
-    "datepicker",
-    "date",
-    "time",
-    "datetime"
+    "DatePicker",
+    "DatetimePicker",
+    "TimePicker",
+    "DateRangePicker"
   ],
   "author": "2631541504@qq.com",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/livelybone/vue-datepicker/issues"
   },
-  "homepage": "https://github.com/livelybone/vue-datepicker#readme",
+  "homepage": "https://livelybone.github.io/vue/vue-datepicker/",
   "devDependencies": {
     "@babel/core": "^7.5.0",
     "@babel/plugin-transform-runtime": "^7.5.0",
     "@babel/preset-env": "^7.5.0",
+    "@babel/preset-typescript": "^7.3.3",
     "@babel/runtime": "^7.5.1",
+    "@livelybone/singleton": "^1.1.1",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.11.0",
     "@vue/test-utils": "^1.0.0-beta.19",
-    "babel-eslint": "^10.0.2",
     "babel-loader": "^8.0.6",
     "babel-plugin-istanbul": "^5.1.4",
     "chai": "^4.2.0",
+    "chalk": "^2.4.2",
+    "chokidar": "^3.0.2",
     "commitizen": "^3.0.7",
     "conventional-changelog-cli": "^2.0.12",
     "cross-env": "^5.2.0",
+    "cross-spawn": "^6.0.5",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.3.0",
     "eslint-config-airbnb-base": "^13.0.0",
@@ -54,6 +60,7 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^5.1.0",
+    "express": "^4.17.1",
     "husky": "^3.0.0",
     "karma": "^4.1.0",
     "karma-chai": "^0.1.0",
@@ -65,6 +72,8 @@
     "karma-webpack": "^4.0.2",
     "lint-staged": "^9.2.0",
     "mocha": "^6.1.4",
+    "ncp": "^2.0.0",
+    "prettier": "^1.18.2",
     "rollup": "^1.16.7",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.0.1",
@@ -72,6 +81,8 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-uglify": "^6.0.2",
     "rollup-plugin-vue": "^5.0.1",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
     "vue": "^2.5.16",
     "vue-loader": "^15.2.4",
     "vue-template-compiler": "^2.5.16",
@@ -80,9 +91,9 @@
   },
   "dependencies": {
     "@livelybone/copy": "^2.6.3",
-    "@livelybone/date-generator": "^3.2.1",
-    "@livelybone/vue-popper": "^2.3.1",
-    "vue-scrollbar-live": "^5.2.2"
+    "@livelybone/date-generator": "^4.2.1",
+    "@livelybone/vue-popper": "^2.4.0",
+    "vue-scrollbar-live": "^5.5.1"
   },
   "config": {
     "commitizen": {
@@ -95,7 +106,7 @@
     }
   },
   "lint-staged": {
-    "**/*.{js,vue}": [
+    "**/*.{js,ts,vue}": [
       "eslint --fix",
       "git update-index --again"
     ],

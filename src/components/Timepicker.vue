@@ -1,16 +1,30 @@
 <template>
   <div class="timepicker" ref="wrap">
-    <input
-      class="vue-input"
-      :id="id"
-      :value="value"
-      :placeholder="placeholder"
-      :readonly="!canEdit || isMobile"
-      :style="inputStyle"
-      @click="canEdit ? hide(false) : ''"
-      @keyup.enter="inputEnter"
-      @blur="blur"
-    />
+    <div class="input-wrapper">
+      <div class="prefix">
+        <slot name="prefix">
+          <icon-time />
+        </slot>
+      </div>
+      <input
+        class="vue-input"
+        :id="id"
+        :value="value"
+        :placeholder="placeholder"
+        :readonly="!canEdit || isMobile"
+        :style="inputStyle"
+        @click="canEdit ? hide(false) : ''"
+        @keyup.enter="inputEnter"
+        @blur="blur"
+        @focus="focus"
+      />
+      <div class="suffix">
+        <slot name="suffix" />
+        <div class="icon-clear" @click="onClear">
+          <icon-del />
+        </div>
+      </div>
+    </div>
     <popper
       v-if="canEdit && showPicker"
       class="picker"
@@ -47,6 +61,7 @@ import * as DateGenerator from '@livelybone/date-generator'
 import mixin from '../common/mixin'
 import { timeCompare, timeReg } from '../common/time'
 import TimePin from '../common/Time.vue'
+import IconTime from '../common/IconTime.vue'
 
 export default {
   mixins: [mixin],
@@ -68,7 +83,7 @@ export default {
       return this.btnStr || '确定'
     },
     myValue() {
-      const { hour, minute, second } = this.timeObj
+      const { hour = '0', minute = '0', second = '0' } = this.timeObj
       return `${this.fillTo(2, hour)}:${this.fillTo(2, minute)}:${this.fillTo(
         2,
         second,
@@ -106,6 +121,7 @@ export default {
       }
     },
     blur(ev, isBlur = true) {
+      this.isFocus = false
       const value = isBlur ? ev.target.value : ev
       if (value !== this.myValue) {
         if (timeReg.test(value)) {
@@ -136,6 +152,6 @@ export default {
       this.$emit('input', this.myValue)
     },
   },
-  components: { TimePin },
+  components: { TimePin, IconTime },
 }
 </script>
