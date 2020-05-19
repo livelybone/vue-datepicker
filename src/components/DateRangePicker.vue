@@ -5,7 +5,7 @@
       :id="id"
       :value="value"
       :placeholder="placeholder || '请选择开始'"
-      :secondPlaceholder="placeholder || '请选择开始'"
+      :secondPlaceholder="placeholder || '请选择结束'"
       :readonly="!canEdit || isMobile"
       :inputStyle="inputStyle"
       :rangeSeparator="rangeSeparator"
