@@ -1,78 +1,81 @@
 <template>
   <div class="timepicker" ref="wrap">
-    <div class="input-wrapper">
-      <div class="prefix">
-        <slot name="prefix">
-          <icon-time />
-        </slot>
-      </div>
-      <input
-        class="vue-input"
-        :id="id"
-        :value="value"
-        :placeholder="placeholder"
-        :readonly="!canEdit || isMobile"
-        :style="inputStyle"
-        @click="canEdit ? hide(false) : ''"
-        @keyup.enter="inputEnter"
-        @blur="blur"
-        @focus="focus"
-      />
-      <div class="suffix">
-        <slot name="suffix" />
-        <div class="icon-clear" @click="onClear">
-          <icon-del />
-        </div>
-      </div>
-    </div>
+    <input-el
+      ref="inputEl"
+      :id="id"
+      :value="[value]"
+      :placeholder="placeholder || '请选择时间'"
+      :readonly="!canEdit || isMobile"
+      :inputStyle="inputStyle"
+      :rangeSeparator="rangeSeparator"
+      :isFocus="showPicker"
+      @inputEnter="inputEnter"
+      @clear="onClear"
+    >
+      <slot name="prefix" slot="prefix">
+        <icon-time />
+      </slot>
+      <slot name="suffix" slot="suffix" />
+    </input-el>
     <popper
-      v-if="canEdit && showPicker"
+      v-if="canEdit"
+      v-show="showPicker"
       class="picker"
       :referenceElm="$refs.wrap"
       :popperOptions="$popperProps.popperOptions"
       :arrowOffsetScaling="$popperProps.arrowOffsetScaling"
       :arrowPosition="$popperProps.arrowPosition"
     >
-      <time-pin
-        :scrollbarProps="scrollbarProps"
-        :value="value"
-        :type="type"
-        :minTime="minTime"
-        :maxTime="maxTime"
-        :timeStr="timeStr"
-        @input="input"
-      />
-      <div class="btns">
-        <span
-          class="btn btn-sure"
-          @click="
-            $emit('input', myValue)
-            hide()
-          "
-          >{{ $btnStr }}</span
-        >
+      <div class="picker-content">
+        <time-pin
+          ref="timePin0"
+          :selectedTime="timeObj"
+          :type="type"
+          :minTime="limit.minTime"
+          :maxTime="limit.maxTime"
+          :timeStr="timeStr"
+          :scrollbarProps="scrollbarProps"
+          @chose="chose"
+        />
+        <div class="btns">
+          <span
+            class="btn btn-sure"
+            @click="
+              $emit('input', myValue)
+              hide()
+            "
+            >{{ $btnStr }}</span
+          >
+        </div>
       </div>
     </popper>
   </div>
 </template>
 
 <script>
-import * as DateGenerator from '@livelybone/date-generator'
+import { parseTime } from '@livelybone/date-generator'
 import mixin from '../common/mixin'
-import { timeCompare, timeReg } from '../common/time'
-import TimePin from '../common/Time.vue'
+import {
+  dealTimeLimit,
+  formatTime,
+  timeReg,
+  timeValidator,
+} from '../common/utils'
+import TimePin from '../common/TimePin.vue'
 import IconTime from '../common/IconTime.vue'
+import InputEl from '../common/InputEl'
 
 export default {
   mixins: [mixin],
   name: 'Timepicker',
   props: {
+    type: String,
     timeStr: Array,
     btnStr: String,
   },
   data() {
     return {
-      timeObj: {},
+      timeObj: null,
     }
   },
   computed: {
@@ -83,35 +86,39 @@ export default {
       return this.btnStr || '确定'
     },
     myValue() {
-      const { hour = '0', minute = '0', second = '0' } = this.timeObj
-      return `${this.fillTo(2, hour)}:${this.fillTo(2, minute)}:${this.fillTo(
-        2,
-        second,
-      )}`
+      return formatTime(this.timeObj, this.type)
     },
-    minTime() {
-      if (this.min && !timeReg.test(this.min)) {
-        console.warn('Timepicker: prop min is invalid')
-        return ''
-      }
-      return this.min
-    },
-    maxTime() {
-      if (this.max && !timeReg.test(this.max)) {
-        console.warn('Timepicker: prop max is invalid')
-        return ''
-      }
-      return this.max
+    limit() {
+      const { error, ...rest } = dealTimeLimit(this.min, this.max)
+      if (error) this.$emit('error', new Error(error))
+      return rest
     },
   },
   watch: {
-    value(val) {
-      if (this.myValue === val) this.blur(val, false)
+    value: {
+      immediate: true,
+      handler(val) {
+        if (this.myValue !== val) this.blur(val, false)
+      },
+    },
+    timeObj: {
+      immediate: true,
+      handler(val, oldVal) {
+        if (formatTime(val, this.type) !== formatTime(oldVal, this.type)) {
+          this.timeChange()
+        }
+      },
     },
   },
   methods: {
-    fillTo(width, num) {
-      return DateGenerator.fillTo(width, num)
+    hideEffect() {
+      this.$nextTick(() => {
+        if (this.showPicker) {
+          this.$refs.timePin0.correctScroll()
+        } else {
+          this.blur({ target: this.$refs.inputEl.$refs.input0 }, true)
+        }
+      })
     },
     inputEnter(ev) {
       const { value } = ev.target
@@ -121,37 +128,33 @@ export default {
       }
     },
     blur(ev, isBlur = true) {
-      this.isFocus = false
       const value = isBlur ? ev.target.value : ev
-      if (value !== this.myValue) {
-        if (timeReg.test(value)) {
-          const time = DateGenerator.parseTime(value.match(timeReg)[0])
-          if (
-            timeCompare(time, this.minTime, 1, this.myType) &&
-            timeCompare(time, this.maxTime, -1, this.myType)
-          ) {
-            this.timeObj = time
-            if (isBlur) this.$emit('input', this.myValue)
-          } else if (!isBlur) {
-            console.warn(
-              'vue-datepicker: Timepicker: prop value is out of range',
-            )
-            this.$emit('input', '')
-          }
+      if (value === this.myValue) this.$forceUpdate()
+      else {
+        const time = parseTime(value)
+        const { minTime, maxTime } = this.limit
+        const error = timeValidator(time, this.type, minTime, maxTime)
+
+        if (error) {
+          this.$emit('error', new Error(error))
+          this.timeObj = null
+          this.$emit('input', this.myValue)
         } else {
-          if (value)
-            console.warn('vue-datepicker: Timepicker: prop value is invalid')
-          this.$emit('input', '')
+          this.timeObj = time
+          if (isBlur) this.$emit('input', this.myValue)
         }
-      } else {
-        this.$forceUpdate()
       }
     },
-    input(val) {
+    timeChange() {
+      this.$nextTick(() => {
+        const { timePin0 } = this.$refs
+        if (this.timeObj) timePin0.timeObj = { ...this.timeObj }
+      })
+    },
+    chose(val) {
       this.timeObj = val
-      this.$emit('input', this.myValue)
     },
   },
-  components: { TimePin, IconTime },
+  components: { TimePin, IconTime, InputEl },
 }
 </script>

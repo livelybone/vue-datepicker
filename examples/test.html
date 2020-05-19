@@ -28,10 +28,16 @@
   .timepicker .vue-popper {
     /*width: 120vw;*/
   }
+
+  .datepicker, .date-range-picker, .timepicker, .datetime-picker {
+    height: 30px;
+    margin: 0 0 10px;
+  }
   </style>
 </head>
 <body style="padding:100vh 20px; margin: 0">
 <div id="datepicker"></div>
+<div id="daterangepicker"></div>
 <div id="timepicker"></div>
 <div id="datetime-picker"></div>
 <!--<input type="text">-->
@@ -48,7 +54,7 @@ var popperProps = {
       },
     },
     onUpdate: function (data) {
-      console.log(JSON.stringify(data.attributes))
+      // console.log(JSON.stringify(data.attributes))
     }
   },
 }
@@ -60,6 +66,8 @@ new Vue({
     ' @input="log"' +
     ' min="2018-6-1"' +
     ' max="2020-01-01"' +
+    // ' type="year"' +
+    ' :multiple="true"' +
     ' :dayStr="dayStr"' +
     ' :popperProps="popperProps"' +
     ' :scrollbarProps="{isMobile:isM}"' +
@@ -67,7 +75,7 @@ new Vue({
   data: function () {
     return {
       dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-      date: '2018-06-01',
+      date: '',
       popperProps: popperProps,
     }
   },
@@ -79,6 +87,34 @@ new Vue({
   },
   components: { 'datepicker': VueDatepicker.Datepicker },
 })
+
+new Vue({
+  el: '#daterangepicker',
+  template: '<date-range-picker' +
+    ' :value="date"' +
+    ' @input="log"' +
+    ' min="2018-6-1"' +
+    ' max="2020-01-01"' +
+    ' :dayStr="dayStr"' +
+    ' :popperProps="popperProps"' +
+    ' :scrollbarProps="{isMobile:isM}"' +
+    ' :firstDayOfWeek="1"/>',
+  data: function () {
+    return {
+      dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      date: ['2018-06-01'],
+      popperProps: popperProps,
+    }
+  },
+  methods: {
+    log: function (val) {
+      this.date = val
+      console.log(val)
+    },
+  },
+  components: { 'date-range-picker': VueDatepicker.DateRangePicker },
+})
+
 new Vue({
   el: '#timepicker',
   template: '<timepicker' +
@@ -105,6 +141,7 @@ new Vue({
   },
   components: { 'timepicker': VueDatepicker.Timepicker },
 })
+
 new Vue({
   el: '#datetime-picker',
   template: '<datetime-picker' +

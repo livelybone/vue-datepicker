@@ -1,7 +1,7 @@
 # @livelybone/vue-datepicker
 [![NPM Version](http://img.shields.io/npm/v/@livelybone/vue-datepicker.svg?style=flat-square)](https://www.npmjs.com/package/@livelybone/vue-datepicker)
 [![Download Month](http://img.shields.io/npm/dm/@livelybone/vue-datepicker.svg?style=flat-square)](https://www.npmjs.com/package/@livelybone/vue-datepicker)
-![gzip with dependencies: kb](https://img.shields.io/badge/gzip--with--dependencies-kb-brightgreen.svg "gzip with dependencies: kb")
+![gzip with dependencies: 25kb](https://img.shields.io/badge/gzip--with--dependencies-25kb-brightgreen.svg "gzip with dependencies: 25kb")
 ![typescript](https://img.shields.io/badge/typescript-supported-blue.svg "typescript")
 ![pkg.module](https://img.shields.io/badge/pkg.module-supported-blue.svg "pkg.module")
 

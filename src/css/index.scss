@@ -20,11 +20,13 @@ $picker-item-selected-before-width: size(4);
 $picker-item-selected-before-height: size(2.4);
 
 .datepicker,
+.date-range-picker,
 .timepicker,
 .datetime-picker {
   position: relative;
   font-size: size(1.4);
   color: $black;
+  user-select: none;
 
   /* scrollbar css */
   .scrollbar-wrap {
@@ -42,6 +44,7 @@ $picker-item-selected-before-height: size(2.4);
     &[x-placement^='bottom'] .arrow {
       border-bottom-color: rgba($border, 0.5) !important;
     }
+
     &[x-placement^='top'] .arrow {
       border-top-color: rgba($border, 0.5) !important;
     }
@@ -82,10 +85,6 @@ $picker-item-selected-before-height: size(2.4);
     padding: 0 size(0.5);
   }
 
-  .suffix {
-    padding-right: size(0.3);
-  }
-
   .icon-clear {
     display: flex;
     align-items: center;
@@ -109,14 +108,21 @@ $picker-item-selected-before-height: size(2.4);
     height: 100%;
     flex: 1;
     border: none;
+
+    &::placeholder {
+      color: $black-lighter;
+    }
   }
 
   .picker {
     display: block;
     z-index: 10000;
-    width: $picker-width;
-    padding: size(1);
     box-shadow: 0 1px size(1) $shadow;
+
+    .picker-content {
+      width: $picker-width;
+      padding: size(1);
+    }
 
     .picker-head {
       padding: 0 0 size(1);
@@ -219,20 +225,60 @@ $picker-item-selected-before-height: size(2.4);
             cursor: no-drop !important;
           }
 
-          &.selected {
+          &.selected,
+          &.is-now,
+          &.is-in-range {
             position: relative;
-            color: #fff;
 
             &:before {
               content: '';
+              box-sizing: border-box;
               position: absolute;
               left: 50%;
               top: 50%;
               z-index: -1;
-              width: $picker-item-selected-before-width;
+              width: 100%;
+              max-width: $picker-item-selected-before-width;
               height: $picker-item-selected-before-height;
-              margin: (-$picker-item-selected-before-height/2) 0 0
-                (-$picker-item-selected-before-width/2);
+              border-radius: size(0.3);
+              border: 1px solid $main;
+              transform: translate(-50%, -50%);
+            }
+          }
+
+          &.is-now {
+            color: $main;
+
+            &:before {
+              content: '';
+              border: 1px solid rgba($main, 0.2);
+              background: none;
+            }
+
+            &.disabled {
+              opacity: 0.8;
+              color: $main !important;
+
+              &:before {
+                content: '' !important;
+              }
+            }
+          }
+
+          &.is-in-range {
+            &:before {
+              max-width: none;
+              border-radius: 0;
+              border: none;
+              background: rgba($main, 0.15);
+            }
+          }
+
+          &.selected {
+            color: #fff;
+
+            &:before {
+              max-width: $picker-item-selected-before-width;
               border-radius: size(0.3);
               background: $main;
             }
@@ -255,5 +301,15 @@ $picker-item-selected-before-height: size(2.4);
         cursor: pointer;
       }
     }
+  }
+
+  .range-picker {
+    display: flex;
+  }
+}
+
+.date-range-picker {
+  .vue-input {
+    text-align: center;
   }
 }

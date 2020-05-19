@@ -1,6 +1,6 @@
 <template>
   <div class="picker-items dates">
-    <div v-if="choseType === 'date'" class="row-item h">
+    <div v-if="type === 'date'" class="row-item h">
       <span v-for="(item, i) in $dayStr" class="item date" :key="i">{{
         item
       }}</span>
@@ -10,41 +10,53 @@
         v-for="(item, j) in rowItems"
         class="item"
         :class="{
-          'not-in-month': choseType === 'date' && !item.isInThisMonth,
+          'not-in-month': type === 'date' && !item.isInThisMonth,
           disabled: !item.canBeChose,
-          [choseType]: true,
+          [type]: true,
           selected: isSelected(item),
+          'is-now': item.isNow,
+          'is-in-range': isInRange(item),
         }"
         :key="i + '' + j"
         @click="chose(item)"
-        >{{ item[choseType] }}</span
+        @mouseover="item.canBeChose && $emit('mouseover', item)"
+        >{{ item[type] }}</span
       >
     </div>
   </div>
 </template>
 
 <script>
-import * as DateGenerator from '@livelybone/date-generator'
-import { dateCompare, dateReg } from './date'
+import {
+  getDateByStep,
+  getMonthByStep,
+  gntCalendar,
+  gntMonth,
+  gntYear,
+} from '@livelybone/date-generator'
+import {
+  AllTypes,
+  createNowTimeObj,
+  dateCompare,
+  formatDateObj,
+  getNextMonthFirstDate,
+  getNextTenYearFirstDate,
+  getNextYearFirstDate,
+  getPrevMonthLastDate,
+  getPrevTenYearLastDate,
+  getPrevYearLastDate,
+  sliceUtilEqual,
+} from './utils'
 
 export default {
-  name: 'Dates',
-  beforeMount() {
-    this.setValue(() => {
-      const now = new Date()
-      this.dateObj = {
-        year: now.getFullYear(),
-        month: now.getMonth() + 1,
-        date: now.getDate(),
-      }
-    })
-  },
+  name: 'Date',
   props: {
-    value: String,
     type: String,
-    minDate: String,
-    maxDate: String,
+    minDate: Object,
+    maxDate: Object,
     dayStr: Array,
+    selectedDates: Array,
+    isRange: Boolean,
     firstDayOfWeek: {
       type: Number,
       default: 0,
@@ -52,15 +64,10 @@ export default {
   },
   data() {
     return {
-      year: '',
-      month: '',
-      date: '',
+      dateObj: formatDateObj(createNowTimeObj()),
     }
   },
   computed: {
-    choseType() {
-      return /^(year|month|date|time)$/.test(this.type) ? this.type : 'date'
-    },
     $dayStr() {
       const dayStr =
         !this.dayStr ||
@@ -72,201 +79,129 @@ export default {
         .slice(this.firstDayOfWeek)
         .concat(dayStr.slice(0, this.firstDayOfWeek))
     },
-    minD() {
-      return {
-        ...{ year: 0, month: 0, date: 0 },
-        ...(this.minDate && DateGenerator.parseDate(this.minDate)),
-      }
-    },
-    maxD() {
-      return {
-        ...{ year: Infinity, month: Infinity, date: Infinity },
-        ...(this.maxDate && DateGenerator.parseDate(this.maxDate)),
-      }
-    },
-    dateObj: {
-      get() {
-        return {
-          year: this.year,
-          month: this.month,
-          date: this.date,
-        }
-      },
-      set(val) {
-        const { fillTo } = DateGenerator
-        this.year = fillTo(4, val.year)
-        this.month = fillTo(2, val.month)
-        this.date = fillTo(2, val.date)
-      },
-    },
     years() {
-      if (!this.year) return []
-      return DateGenerator.gntYear(
-        Math.floor(this.year / 10 - 0.5) * 10 + 1,
-        10,
-        {
-          splitLen: 3,
-          min: this.minD.year,
-          max: this.maxD.year,
-        },
-      )
+      if (!this.dateObj.year) return []
+      return gntYear(Math.floor(this.dateObj.year / 10 - 0.5) * 10 + 1, 10, {
+        splitLen: 3,
+        min: this.minDate.year,
+        max: this.maxDate.year,
+      })
     },
     months() {
-      return DateGenerator.gntMonth(this.year, {
+      return gntMonth(this.dateObj.year, {
         splitLen: 3,
         min: this.minDate,
         max: this.maxDate,
       })
     },
     dates() {
-      return DateGenerator.gntCalendar(this, {
+      return gntCalendar(this.dateObj, {
         min: this.minDate,
         max: this.maxDate,
         firstDayOfWeek: this.firstDayOfWeek,
       })
     },
     pickerItems() {
-      if (this.choseType === 'year') {
-        return this.years
-      }
-      if (this.choseType === 'month') {
-        return this.months
-      }
+      if (this.type === 'year') return this.years
+      if (this.type === 'month') return this.months
       return this.dates
     },
   },
   watch: {
     pickerItems(val) {
       let showBtn = null
-      if (this.choseType === 'date') {
-        const dates = this.getDate({ date: 1 })
+      if (this.type === 'time') {
         showBtn = {
-          prev: dateCompare(dates[0], this.minDate),
-          next: dateCompare(dates[1], this.maxDate, -1),
-        }
-      } else if (this.choseType === 'month' || this.choseType === 'year') {
-        const first = val[0][0]
-        const lastRow = val[val.length - 1]
-        const last = lastRow[lastRow.length - 1]
-        if (this.choseType === 'month') {
-          showBtn = {
-            prev: dateCompare(
-              { year: first.year - 1, month: 12 },
-              this.minDate,
-              1,
-              'month',
-            ),
-            next: dateCompare(
-              { year: +last.year + 1, month: 1 },
-              this.maxDate,
-              -1,
-              'month',
-            ),
-          }
-        } else {
-          showBtn = {
-            prev: dateCompare(
-              { year: first.year - 1 },
-              this.minDate,
-              1,
-              'year',
-            ),
-            next: dateCompare(
-              { year: +last.year + 1 },
-              this.maxDate,
-              -1,
-              'year',
-            ),
-          }
+          prev: dateCompare(getDateByStep(this.dateObj, -1), this.minDate, 1),
+          next: dateCompare(getDateByStep(this.dateObj, 1), this.maxDate, -1),
         }
       } else {
+        const { prev, next } = {
+          date: {
+            prev: v => getPrevMonthLastDate(v),
+            next: v => getNextMonthFirstDate(v),
+          },
+          month: {
+            prev: v => getPrevYearLastDate(v.year),
+            next: v => getNextYearFirstDate(v.year),
+          },
+          year: {
+            prev: v => getPrevTenYearLastDate(v.year),
+            next: v => getNextTenYearFirstDate(v.year),
+          },
+        }[this.type]
         showBtn = {
-          prev: dateCompare(this.getDate({ step: -1 }), this.minDate, 1),
-          next: dateCompare(this.getDate({ step: 1 }), this.maxDate, -1),
+          prev: dateCompare(prev(this.dateObj), this.minDate, 1, this.type),
+          next: dateCompare(next(this.dateObj), this.maxDate, -1, this.type),
         }
       }
       this.$emit('emitData', { showBtn, items: val })
     },
-    value() {
-      this.setValue()
+    dateObj: {
+      immediate: true,
+      handler(val) {
+        // This event is used to trigger the interaction of another comp
+        this.$emit('pageChange', { currObj: val })
+      },
     },
   },
   methods: {
-    setValue(cb) {
-      const date =
-        this.value && DateGenerator.parseDate(this.value.match(dateReg)[1])
-      if (date) {
-        this.dateObj = date
-      } else if (cb) {
-        cb()
-      }
-      this.$emit('chose', { ...this.dateObj })
-    },
     chose(item) {
       if (item.canBeChose) {
-        if (this.choseType === 'date') {
-          this.date = item.date
-          this.$emit('chose', { type: 'date', ...item })
-        } else if (this.choseType === 'month') {
-          this.month = item.month
-          this.$emit('chose', { type: 'month', ...item })
-        } else if (this.choseType === 'year') {
-          this.year = item.year
-          this.$emit('chose', { type: 'year', ...item })
-        }
+        this.dateObj[this.type] = item[this.type]
+        this.$emit('chose', { type: this.type, ...item })
+        this.$forceUpdate()
       }
     },
     isSelected(item) {
-      if (this.choseType === 'date') {
+      if (!this.selectedDates) return false
+
+      const checkProps = sliceUtilEqual(AllTypes, this.type)
+      return this.selectedDates
+        .filter(Boolean)
+        .some(it => checkProps.every(k => item[k] === it[k]))
+    },
+    isInRange(item) {
+      if (
+        this.isRange &&
+        this.selectedDates &&
+        this.selectedDates.filter(Boolean).length > 1
+      ) {
+        const date = {
+          ...item,
+          month: (this.type !== 'year' && item.month) || '01',
+          date: (this.type === 'date' && item.date) || '01',
+        }
         return (
-          item.year === this.year &&
-          item.month === this.month &&
-          item.date === this.date
+          dateCompare(date, this.selectedDates[0], 1, this.type) &&
+          dateCompare(date, this.selectedDates[1], -1, this.type)
         )
       }
-      if (this.choseType === 'month') {
-        return item.year === this.year && item.month === this.month
-      }
-      return item.year === this.year
+      return false
     },
     to(step = 1) {
-      if (this.choseType === 'year') {
-        this.dateObj = { ...this.dateObj, year: +this.year + 10 * step }
+      if (this.type === 'year') {
+        this.dateObj = formatDateObj({
+          ...this.dateObj,
+          year: +this.dateObj.year + 10 * step,
+        })
         this.$emit('to', { type: 'ten-year', ...this.dateObj })
-      } else if (this.choseType === 'month') {
-        this.dateObj = { ...this.dateObj, year: +this.year + step }
-        this.$emit('to', { type: 'year', ...this.dateObj })
-      } else if (this.choseType === 'date') {
-        const month = +this.month + step
-        if ((step > 0 && month > 12) || (step < 0 && month < 1)) {
-          this.dateObj = {
-            ...this.dateObj,
-            year: +this.year + step,
-            month: step > 0 ? 1 : 12,
-          }
-        } else {
-          this.dateObj = { ...this.dateObj, month }
-        }
-        this.$emit('to', { type: 'month', ...this.dateObj })
+      } else if (this.type === 'month') {
+        this.dateObj = formatDateObj({
+          ...this.dateObj,
+          year: +this.dateObj.year + step,
+        })
+        if (this.dateObj.canBeChose)
+          this.$emit('to', { type: 'year', ...this.dateObj })
+      } else if (this.type === 'date') {
+        this.dateObj = getMonthByStep(this.dateObj, step)
+        if (this.dateObj.canBeChose)
+          this.$emit('to', { type: 'month', ...this.dateObj })
       } else {
-        const date = this.getDate({ step })
-        this.dateObj = date
-        if (date.canBeChose) this.$emit('to', { type: 'date', ...this.dateObj })
+        this.dateObj = getDateByStep(this.dateObj, step)
+        if (this.dateObj.canBeChose)
+          this.$emit('to', { type: 'date', ...this.dateObj })
       }
-    },
-    getDate({ step, date }) {
-      const dates = this.dates.reduce((pre, arr) => pre.concat(arr), [])
-      if (step !== undefined) {
-        const index = Object.keys(dates).find(
-          k =>
-            dates[k].year === this.year &&
-            dates[k].month === this.month &&
-            dates[k].date === this.date,
-        )
-        return dates[+index + step]
-      }
-      const arr = Object.keys(dates).filter(k => +dates[k].date === +date)
-      return [dates[arr[0] - 1], dates[+arr[1]]]
     },
   },
 }

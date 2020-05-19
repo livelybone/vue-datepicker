@@ -36,6 +36,9 @@ const conf = entry => ({
     format,
     name:
       entry.name === 'index' ? 'VueDatepicker' : `${entry.name}VueDatepicker`,
+    globals: {
+      '@livelybone/date-generator': 'DateGenerator',
+    },
   })),
   external: entry.external ? Object.keys(packageConf.dependencies || {}) : [],
   plugins: [

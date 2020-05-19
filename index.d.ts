@@ -48,38 +48,94 @@ declare class CommonProps extends Vue {
   /**
    * Props of scrollbar, see [vue-scrollbar-live](https://github.com/livelybone/vue-scrollbar-live)
    *
-   * Default to:
-   * { isMobile: false, maxHeight: 200 }
+   * Default to: { isMobile: false, maxHeight: 200 }
    * */
   scrollbarProps?: VueScrollbarProps
 }
 
 declare class Datepicker extends CommonProps {
+  value: string
+
+  /**
+   * Options: 'year', 'month', 'date'
+   *
+   * Default: 'date'
+   * */
+  type?: string
+
   /**
    * Used to set day name
    *
    * Default to:
    * ['日', '一', '二', '三', '四', '五', '六']
    * */
-  dayStr: string[]
+  dayStr?: string[]
 
-  firstDayOfWeek: GntCalendarOptions['firstDayOfWeek']
+  firstDayOfWeek?: GntCalendarOptions['firstDayOfWeek']
+
+  multiple: boolean
+
+  /**
+   * Used to set text of button
+   *
+   * Default to: '确定'
+   * */
+  btnStr: string
+}
+
+declare class DateRangePicker extends Datepicker {
+  value: string
+
+  /**
+   * Options: 'year', 'month', 'date'
+   *
+   * Default: 'date'
+   * */
+  type?: string
+
+  /**
+   * Used to set day name
+   *
+   * Default to:
+   * ['日', '一', '二', '三', '四', '五', '六']
+   * */
+  dayStr?: string[]
+
+  firstDayOfWeek?: GntCalendarOptions['firstDayOfWeek']
+
+  multiple: boolean
+
+  /**
+   * Used to set text of button
+   *
+   * Default to: '确定'
+   * */
+  btnStr: string
+
+  rangeSeparator?: string
+
+  secondPlaceholder?: string
 }
 
 declare class Timepicker extends CommonProps {
   /**
+   * Options: 'hour', 'minute', 'second'
+   *
+   * Default: 'second'
+   * */
+  type?: string
+
+  /**
    * Used to set time name
    *
-   * Default to:
-   * ['时', '分', '秒']
+   * Default to: ['时', '分', '秒']
    * */
   timeStr: string[]
 
   /**
    * Used to set text of button
    *
-   * Default to:
-   * '确定'
+   * Default to: '确定'
    * */
   btnStr: string
 }
@@ -88,28 +144,42 @@ declare class DatetimePicker extends CommonProps {
   /**
    * Used to set day name. Start with Sunday
    *
-   * Default to:
-   * ['日', '一', '二', '三', '四', '五', '六']
+   * Default to: ['日', '一', '二', '三', '四', '五', '六']
    * */
-  dayStr: string[]
+  dayStr?: string[]
 
-  firstDayOfWeek: GntCalendarOptions['firstDayOfWeek']
+  firstDayOfWeek?: GntCalendarOptions['firstDayOfWeek']
 
   /**
    * Used to set time name
    *
-   * Default to:
-   * ['时', '分', '秒']
+   * Default to: ['时', '分', '秒']
    * */
-  timeStr: string[]
+  timeStr?: string[]
 
   /**
    * Used to set text of button
    *
-   * Default to:
-   * '确定'
+   * Default to: '确定'
    * */
-  btnStr: string
+  btnStr?: string
+
+  /**
+   * Options: 'hour', 'minute', 'second'
+   *
+   * Default to: 'second'
+   * */
+  timeType?: string
 }
 
-export { Datepicker, Timepicker, DatetimePicker }
+/**
+ * Svg icon
+ * */
+declare class IconDate extends Vue {}
+
+/**
+ * Svg icon
+ * */
+declare class IconTime extends Vue {}
+
+export { Datepicker, Timepicker, DatetimePicker, IconTime, IconDate }

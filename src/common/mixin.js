@@ -1,6 +1,12 @@
 import { objectDeepMerge } from '@livelybone/copy'
 import VuePopper from '@livelybone/vue-popper'
-import IconDel from './IconDel'
+
+/**
+ * Use timeout to trigger make sure that this callback is triggered after click event
+ * */
+export function triggerAfterClickEvent(cb) {
+  setTimeout(cb)
+}
 
 export default {
   props: {
@@ -19,7 +25,6 @@ export default {
   },
   data() {
     return {
-      isFocus: false,
       showPicker: false,
       defaultPopperProps: Object.freeze({
         arrowPosition: 'start',
@@ -48,33 +53,43 @@ export default {
       return this.scrollbarProps && this.scrollbarProps.isMobile
     },
   },
+  watch: {
+    showPicker(val) {
+      if (!val) this.hideEffect()
+    },
+  },
   methods: {
     hide(hide = true) {
       if (typeof hide === 'object') {
         const { target } = hide
-        if (!(target && this.$refs.wrap.contains(target))) {
-          this.showPicker = !hide
+        if (
+          target &&
+          (!this.$refs.clear || !this.$refs.clear.contains(target))
+        ) {
+          this.showPicker = this.$refs.wrap.contains(target)
         }
-      } else this.showPicker = !hide
+      } else if (!hide) {
+        this.showPicker = true
+      } else {
+        setTimeout(() => {
+          this.showPicker = !hide
+        }, 200)
+      }
     },
-    choseHeadType(val) {
-      setTimeout(() => {
-        this.choseType = val
+    hideEffect() {
+      this.$nextTick(() => {
+        this.blur({ target: this.$refs.inputEl.$refs.input0 }, true)
       })
     },
-    focus() {
-      this.isFocus = true
-    },
     onClear() {
-      this.blur({ target: { value: '' } })
+      this.blur('', false)
     },
   },
-  components: { popper: VuePopper, IconDel },
+  components: { popper: VuePopper },
   beforeMount() {
-    this.blur(this.value, false)
-    window.addEventListener('click', this.hide)
+    window.addEventListener('click', this.hide, true)
   },
   beforeDestroy() {
-    window.removeEventListener('click', this.hide)
+    window.removeEventListener('click', this.hide, true)
   },
 }

@@ -1,122 +1,86 @@
 <template>
   <div class="datetime-picker" ref="wrap">
-    <div class="input-wrapper">
-      <div class="prefix">
-        <slot name="prefix">
-          <icon-date />
-        </slot>
-      </div>
-      <input
-        class="vue-input"
-        :id="id"
-        :value="value"
-        :placeholder="placeholder"
-        :readonly="!canEdit || isMobile"
-        :style="inputStyle"
-        @click="canEdit ? hide(false) : ''"
-        @keyup.enter="inputEnter"
-        @blur="blur"
-        @focus="focus"
-      />
-      <div class="suffix">
-        <slot name="suffix" />
-        <div class="icon-clear" @click="onClear">
-          <icon-del />
-        </div>
-      </div>
-    </div>
+    <input-el
+      ref="inputEl"
+      :id="id"
+      :value="[value]"
+      :placeholder="placeholder || '请选择时间'"
+      :readonly="!canEdit || isMobile"
+      :inputStyle="inputStyle"
+      :rangeSeparator="rangeSeparator"
+      :isFocus="showPicker"
+      @inputEnter="inputEnter"
+      @clear="onClear"
+    >
+      <slot name="prefix" slot="prefix">
+        <icon-date />
+      </slot>
+      <slot name="suffix" slot="suffix" />
+    </input-el>
     <popper
-      v-if="canEdit && showPicker"
+      v-if="canEdit"
+      v-show="showPicker"
       class="picker"
       :referenceElm="$refs.wrap"
       :popperOptions="$popperProps.popperOptions"
       :arrowOffsetScaling="$popperProps.arrowOffsetScaling"
       :arrowPosition="$popperProps.arrowPosition"
     >
-      <div class="picker-head">
-        <span
-          class="prev"
-          :class="{ disabled: !showBtn.prev }"
-          @click="showBtn.prev ? $refs.dateCom.to(-1) : ''"
-          >&lt;</span
-        >
-        <span class="picker-h">
-          <span
-            v-if="
-              choseType === 'date' ||
-                choseType === 'month' ||
-                choseType === 'time'
-            "
-            class="year"
-            @click="choseHeadType('year')"
-            >{{ timeObj.year }}</span
-          >
-          <span v-else-if="choseType === 'year'">{{ tenYears }}</span>
-          <template v-if="choseType === 'date' || choseType === 'time'">
-            &nbsp;-&nbsp;
-            <span class="month" @click="choseHeadType('month')">{{
-              timeObj.month
-            }}</span>
-          </template>
-          <template v-if="choseType === 'time'">
-            &nbsp;-&nbsp;
-            <span class="date" @click="choseHeadType('date')">{{
-              timeObj.date
-            }}</span>
-          </template></span
-        >
-        <span
-          class="next"
-          :class="{ disabled: !showBtn.next }"
-          @click="showBtn.next ? $refs.dateCom.to(1) : ''"
-          >&gt;</span
-        >
-      </div>
-      <time-pin
-        v-if="choseType === 'time'"
-        :value="split(value).time"
-        :type="type"
-        :scrollbarProps="scrollbarProps"
-        :minTime="minTime"
-        :maxTime="maxTime"
-        :timeStr="timeStr"
-        @input="input"
-      />
-      <date
-        v-show="choseType !== 'time'"
-        :value="split(value).date"
-        :type="choseType"
-        :minDate="minDate"
-        :maxDate="maxDate"
+      <date-pin
+        type="time"
+        ref="datePin0"
+        :selectedDates="[timeObj]"
+        :minDate="limit.minDate"
+        :maxDate="limit.maxDate"
         :dayStr="dayStr"
         :firstDayOfWeek="firstDayOfWeek"
-        @chose="chose"
-        @to="chose"
-        @emitData="showBtn = $event.showBtn"
-        ref="dateCom"
-      />
-      <div class="btns">
-        <span
-          class="btn btn-sure"
-          @click="
-            $emit('input', myValue)
-            hide()
-          "
-          >{{ $btnStr }}</span
-        >
-      </div>
+        @itemSelected="chose"
+        @typeChange="typeChange"
+        @error="$emit('error', $event)"
+      >
+        <time-pin
+          v-show="showTimePin"
+          slot="time"
+          ref="timePin0"
+          :selectedTime="timeObj"
+          :type="timeType"
+          :scrollbarProps="scrollbarProps"
+          :minTime="limit.minTime"
+          :maxTime="limit.maxTime"
+          :timeStr="timeStr"
+          @input="chose({ value: $event })"
+        />
+        <div class="btns" slot="btn">
+          <span
+            class="btn btn-sure"
+            @click="
+              $emit('input', myValue)
+              hide()
+            "
+            >{{ $btnStr }}</span
+          >
+        </div>
+      </date-pin>
     </popper>
   </div>
 </template>
 
 <script>
-import * as DateGenerator from '@livelybone/date-generator'
-import { dateCompare, dateReg } from '../common/date'
-import Date from '../common/Date.vue'
+import {
+  dateReg,
+  datetimeValidator,
+  dealDatetimeLimit,
+  formatDateObj,
+  formatDatetime,
+  formatTimeObj,
+  parseDatetime,
+  timeReg,
+} from '../common/utils'
+import DatePin from '../common/DatePin.vue'
 import mixin from '../common/mixin'
-import { timeCompare, timeReg } from '../common/time'
-import TimePin from '../common/Time.vue'
+import TimePin from '../common/TimePin.vue'
 import IconDate from '../common/IconDate.vue'
+import InputEl from '../common/InputEl'
 
 export default {
   mixins: [mixin],
@@ -126,64 +90,60 @@ export default {
     firstDayOfWeek: Number,
     timeStr: Array,
     btnStr: String,
+    timeType: String, // hour, minute, second. default: second
   },
   data() {
     return {
-      timeObj: {},
+      timeObj: null,
       choseType: 'date',
       showBtn: { prev: true, next: true },
+      showTimePin: false,
     }
   },
   computed: {
-    tenYears() {
-      const tenYear = Math.floor(this.timeObj.year / 10 - 0.5)
-      return `${tenYear * 10 + 1} - ${(tenYear + 1) * 10}`
-    },
     $btnStr() {
       return this.btnStr || '确定'
     },
-    minDate() {
-      return this.split(this.min).date
-    },
-    minTime() {
-      return dateCompare(this.split(this.myValue).date, this.minDate, 0)
-        ? this.split(this.min).time
-        : '0'
-    },
-    maxDate() {
-      return this.split(this.max).date
-    },
-    maxTime() {
-      return dateCompare(this.split(this.myValue).date, this.maxDate, 0)
-        ? this.split(this.max).time
-        : '23:59:59'
+    limit() {
+      const { error, ...rest } = dealDatetimeLimit(
+        this.min,
+        this.max,
+        this.timeObj,
+      )
+
+      if (error) this.$emit('error', new Error(error))
+      return rest
     },
     myValue() {
-      const {
-        year = '0',
-        month = '1',
-        date = '1',
-        hour = '--',
-        minute = '--',
-        second = '--',
-      } = this.timeObj
-      const { fillTo } = DateGenerator
-      return `${fillTo(4, year)}-${fillTo(2, month)}-${fillTo(
-        2,
-        date,
-      )} ${fillTo(2, hour)}:${fillTo(2, minute)}:${fillTo(2, second)}`
+      return formatDatetime(this.timeObj, this.timeType)
+    },
+  },
+  watch: {
+    value: {
+      immediate: true,
+      handler(val) {
+        if (val !== this.myValue) this.blur(val, false)
+      },
+    },
+    timeObj: {
+      immediate: true,
+      handler(val, oldVal) {
+        if (
+          formatDatetime(val, this.timeType) !==
+          formatDatetime(oldVal, this.timeType)
+        ) {
+          this.timeChange()
+        }
+      },
     },
   },
   methods: {
     split(val) {
-      const arr = val ? val.split(/\s/) : []
+      const arr = val ? val.trim().split(/\s+/) : []
       return {
         date: dateReg.test(arr[0]) ? arr[0] : '',
         time: timeReg.test(arr[1]) ? arr[1] : '',
       }
-    },
-    fillTo(width, num) {
-      return DateGenerator.fillTo(width, num)
     },
     inputEnter(ev) {
       const { value } = ev.target
@@ -194,58 +154,48 @@ export default {
       }
     },
     blur(ev, isBlur = true) {
-      this.isFocus = false
       const value = isBlur ? ev.target.value : ev
-      if (value !== this.myValue) {
-        const { date, time } = this.split(value)
-        if (dateReg.test(date) && timeReg.test(time)) {
-          const dateObj = DateGenerator.parseDate(date.match(dateReg)[0])
-          const timeObj = DateGenerator.parseTime(time.match(timeReg)[0])
-          const dateGt =
-            dateCompare(dateObj, this.minDate, 1) &&
-            dateCompare(dateObj, this.maxDate, -1)
-          if (
-            (dateGt &&
-              timeCompare(timeObj, this.minTime, 1, this.myType) &&
-              timeCompare(timeObj, this.maxTime, -1, this.myType)) ||
-            (dateGt &&
-              !dateCompare(dateObj, this.minDate, 0) &&
-              !dateCompare(dateObj, this.maxDate, 0))
-          ) {
-            this.timeObj = { ...dateObj, ...timeObj }
-            if (isBlur) this.$emit('input', this.myValue)
-          } else if (!isBlur) {
-            console.warn(
-              'vue-datepicker: DatetimePicker: prop value is out of range',
-            )
-            this.$emit('input', '')
-          }
+      if (value === this.myValue) this.$forceUpdate()
+      else {
+        const datetime = parseDatetime(value)
+        const { minDatetime, maxDatetime } = this.limit
+        const error = datetimeValidator(
+          datetime,
+          this.timeType,
+          minDatetime,
+          maxDatetime,
+        )
+
+        if (error) {
+          this.$emit('error', new Error(error))
+          this.timeObj = null
+          this.$emit('input', this.myValue)
         } else {
-          if (value)
-            console.warn(
-              'vue-datepicker: DatetimePicker: prop value is invalid',
-            )
-          this.$emit('input', '')
+          this.timeObj = datetime
+          if (isBlur) this.$emit('input', this.myValue)
         }
-      } else {
-        this.$forceUpdate()
       }
     },
-    chose(val) {
-      this.timeObj = { ...this.timeObj, ...val }
-      if (val.type === 'date') {
-        this.choseType = 'time'
-      } else if (val.type === 'month') {
-        this.choseType = 'date'
-      } else if (val.type === 'year') {
-        this.choseType = 'month'
-      }
+    timeChange() {
+      this.$nextTick(() => {
+        const { timePin0, datePin0 } = this.$refs
+        if (this.timeObj) {
+          timePin0.timeObj = formatTimeObj({ ...this.timeObj })
+          datePin0.$refs.dateCom.dateObj = formatDateObj({ ...this.timeObj })
+        }
+      })
+    },
+    chose({ value }) {
+      this.timeObj = { ...this.timeObj, ...value }
+    },
+    typeChange(type) {
+      this.showTimePin = type === 'time'
     },
     input(val) {
       this.timeObj = { ...this.timeObj, ...val }
       this.$emit('input', this.myValue)
     },
   },
-  components: { TimePin, Date, IconDate },
+  components: { TimePin, DatePin, IconDate, InputEl },
 }
 </script>

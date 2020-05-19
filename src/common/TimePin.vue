@@ -12,6 +12,7 @@
     <scrollbar
       v-for="(rowItems, i) in pickerItems"
       class="row-item line"
+      ref="scrollbar"
       :style="pickerItemStyle"
       :key="i"
       :isMobile="$scrollbarProps.isMobile"
@@ -36,24 +37,20 @@
 </template>
 
 <script>
-import * as DateGenerator from '@livelybone/date-generator'
 import VueScrollbar from 'vue-scrollbar-live'
-import { timeCompare, timeReg } from './time'
+import {
+  fillTo,
+  getHour,
+  getMinute,
+  getSecond,
+  parseTime,
+} from '@livelybone/date-generator'
+import { createNowTimeObj, formatTimeObj, timeCompare } from './utils'
 
 export default {
   name: 'Time',
-  beforeMount() {
-    this.setValue(() => {
-      const now = new Date()
-      this.timeObj = {
-        hour: this.fillTo(2, now.getHours()),
-        minute: this.fillTo(2, now.getMinutes()),
-        second: this.fillTo(2, now.getSeconds()),
-      }
-    })
-  },
   props: {
-    value: String,
+    selectedTime: Object,
     type: String,
     scrollbarProps: Object,
     minTime: String,
@@ -62,9 +59,7 @@ export default {
   },
   data() {
     return {
-      hour: '00',
-      minute: '00',
-      second: '00',
+      timeObj: formatTimeObj(createNowTimeObj()),
     }
   },
   computed: {
@@ -88,49 +83,41 @@ export default {
     minT() {
       return {
         ...{ hour: 0, minute: 0, second: 0 },
-        ...(this.minTime && DateGenerator.parseTime(this.minTime)),
+        ...(typeof this.minTime === 'string'
+          ? parseTime(this.minTime)
+          : this.minTime),
       }
     },
     maxT() {
       return {
         ...{ hour: 23, minute: 59, second: 59 },
-        ...(this.maxTime && DateGenerator.parseTime(this.maxTime)),
+        ...(typeof this.maxTime === 'string'
+          ? parseTime(this.maxTime)
+          : this.maxTime),
       }
     },
-    timeObj: {
-      get() {
-        return {
-          hour: this.hour,
-          minute: this.minute,
-          second: this.second,
-        }
-      },
-      set(val) {
-        this.hour = this.fillTo(2, val.hour)
-        this.minute = this.fillTo(2, val.minute)
-        this.second = this.fillTo(2, val.second)
-      },
-    },
     hours() {
-      return DateGenerator.getHour({
+      return getHour({
         min: this.minT.hour,
         max: this.maxT.hour,
       })
     },
     minutes() {
-      return DateGenerator.getMinute({
-        min: +this.hour === this.minT.hour ? this.minT.minute : 0,
-        max: +this.hour === this.maxT.hour ? this.maxT.minute : 59,
+      return getMinute({
+        min: +this.timeObj.hour === +this.minT.hour ? this.minT.minute : 0,
+        max: +this.timeObj.hour === +this.maxT.hour ? this.maxT.minute : 59,
       })
     },
     seconds() {
-      return DateGenerator.getSecond({
+      return getSecond({
         min:
-          +this.hour === this.minT.hour && +this.minute === this.minT.minute
+          +this.timeObj.hour === +this.minT.hour &&
+          +this.timeObj.minute === +this.minT.minute
             ? this.minT.second
             : 0,
         max:
-          +this.hour === this.maxT.hour && +this.minute === this.maxT.minute
+          +this.timeObj.hour === +this.maxT.hour &&
+          +this.timeObj.minute === +this.maxT.minute
             ? this.maxT.second
             : 59,
       })
@@ -150,61 +137,64 @@ export default {
     },
     scrollTo() {
       return {
-        hour: (this.hour - 1) / 22,
-        minute: (this.minute - 1) / 58,
-        second: (this.second - 1) / 58,
+        hour: (this.timeObj.hour - 1) / 22,
+        minute: (this.timeObj.minute - 1) / 58,
+        second: (this.timeObj.second - 1) / 58,
       }
     },
   },
   watch: {
-    hour() {
-      if (!timeCompare(this, this.minT, 1, 'minute'))
-        this.minute = this.fillTo(2, this.minT.minute)
-      else if (!timeCompare(this, this.maxT, -1, 'minute'))
-        this.minute = this.fillTo(2, this.maxT.minute)
-      else if (!timeCompare(this, this.minT))
-        this.second = this.fillTo(2, this.minT.second)
-      else if (!timeCompare(this, this.maxT, -1))
-        this.second = this.fillTo(2, this.maxT.second)
-      else this.$emit('input', { type: 'hour', ...this.timeObj })
+    'timeObj.hour': {
+      handler() {
+        if (!timeCompare(this.timeObj, this.minT, 1, 'minute'))
+          this.timeObj.minute = fillTo(2, this.minT.minute)
+        else if (!timeCompare(this.timeObj, this.maxT, -1, 'minute'))
+          this.timeObj.minute = fillTo(2, this.maxT.minute)
+        else if (!timeCompare(this.timeObj, this.minT))
+          this.timeObj.second = fillTo(2, this.minT.second)
+        else if (!timeCompare(this.timeObj, this.maxT, -1))
+          this.timeObj.second = fillTo(2, this.maxT.second)
+        else this.$emit('chose', { type: 'hour', ...this.timeObj })
+        this.$forceUpdate()
+      },
     },
-    minute() {
-      if (!timeCompare(this, this.minT))
-        this.second = this.fillTo(2, this.minT.second)
-      else if (!timeCompare(this, this.maxT, -1))
-        this.second = this.fillTo(2, this.maxT.second)
-      else this.$emit('input', { type: 'minute', ...this.timeObj })
+    'timeObj.minute': {
+      handler() {
+        if (!timeCompare(this.timeObj, this.minT))
+          this.timeObj.second = fillTo(2, this.minT.second)
+        else if (!timeCompare(this.timeObj, this.maxT, -1))
+          this.timeObj.second = fillTo(2, this.maxT.second)
+        else this.$emit('chose', { type: 'minute', ...this.timeObj })
+        this.$forceUpdate()
+      },
     },
-    second() {
-      this.$emit('input', { type: 'second', ...this.timeObj })
-    },
-    value() {
-      this.setValue()
+    'timeObj.second': {
+      handler() {
+        this.$emit('chose', { type: 'second', ...this.timeObj })
+      },
     },
   },
   methods: {
-    fillTo(width, num) {
-      return DateGenerator.fillTo(width, num)
-    },
-    setValue(cb) {
-      const date =
-        this.value && DateGenerator.parseTime(this.value.match(timeReg)[1])
-      if (date) {
-        this.timeObj = date
-      } else if (cb) {
-        cb()
-      }
-    },
     chose(item, type = 'second') {
       if (item.canBeChose) {
         if (type === 'second') {
-          this.second = item.value
+          this.timeObj.second = item.value
         } else if (type === 'minute') {
-          this.minute = item.value
+          this.timeObj.minute = item.value
         } else if (type === 'hour') {
-          this.hour = item.value
+          this.timeObj.hour = item.value
         }
+        this.timeObj = { ...this.timeObj }
       }
+    },
+    correctScroll() {
+      setTimeout(() => {
+        Object.keys(this.scrollTo).forEach((k, i) => {
+          if (this.$refs.scrollbar[i]) {
+            this.$refs.scrollbar[i].$scrollTo(this.scrollTo[k])
+          }
+        })
+      })
     },
   },
   components: { scrollbar: VueScrollbar },
