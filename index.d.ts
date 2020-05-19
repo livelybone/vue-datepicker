@@ -8,12 +8,7 @@ declare class CommonProps extends Vue {
   /**
    * Id of input element
    * */
-  id: string | number
-
-  /**
-   * value of component
-   * */
-  value: string
+  id?: string | number
 
   placeholder?: string
 
@@ -54,7 +49,7 @@ declare class CommonProps extends Vue {
 }
 
 declare class Datepicker extends CommonProps {
-  value: string
+  value?: string
 
   /**
    * Options: 'year', 'month', 'date'
@@ -83,8 +78,8 @@ declare class Datepicker extends CommonProps {
   btnStr: string
 }
 
-declare class DateRangePicker extends Datepicker {
-  value: string
+declare class DateRangePicker extends CommonProps {
+  value?: [string, string] | [string] | []
 
   /**
    * Options: 'year', 'month', 'date'
@@ -102,15 +97,6 @@ declare class DateRangePicker extends Datepicker {
   dayStr?: string[]
 
   firstDayOfWeek?: GntCalendarOptions['firstDayOfWeek']
-
-  multiple: boolean
-
-  /**
-   * Used to set text of button
-   *
-   * Default to: '确定'
-   * */
-  btnStr: string
 
   rangeSeparator?: string
 
@@ -118,6 +104,8 @@ declare class DateRangePicker extends Datepicker {
 }
 
 declare class Timepicker extends CommonProps {
+  value?: string
+
   /**
    * Options: 'hour', 'minute', 'second'
    *
@@ -130,17 +118,19 @@ declare class Timepicker extends CommonProps {
    *
    * Default to: ['时', '分', '秒']
    * */
-  timeStr: string[]
+  timeStr?: string[]
 
   /**
    * Used to set text of button
    *
    * Default to: '确定'
    * */
-  btnStr: string
+  btnStr?: string
 }
 
 declare class DatetimePicker extends CommonProps {
+  value?: string
+
   /**
    * Used to set day name. Start with Sunday
    *
@@ -182,4 +172,11 @@ declare class IconDate extends Vue {}
  * */
 declare class IconTime extends Vue {}
 
-export { Datepicker, Timepicker, DatetimePicker, IconTime, IconDate }
+export {
+  Datepicker,
+  DateRangePicker,
+  Timepicker,
+  DatetimePicker,
+  IconTime,
+  IconDate,
+}

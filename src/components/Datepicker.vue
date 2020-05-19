@@ -65,7 +65,6 @@ export default {
   mixins: [mixin],
   name: 'Datepicker',
   props: {
-    value: [String, Array],
     multiple: Boolean,
     type: String,
     dayStr: Array,

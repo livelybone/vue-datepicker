@@ -39,16 +39,17 @@ npm i -S @livelybone/vue-datepicker
 
 ## Usage
 ```js
-import {Datepicker, Timepicker, DatetimePicker} from '@livelybone/vue-datepicker';
+import { Datepicker, Timepicker, DatetimePicker, DateRangePicker } from '@livelybone/vue-datepicker';
 
 // Global register
 Vue.component('datepicker', Datepicker);
 Vue.component('timepicker', Timepicker);
 Vue.component('datetime-picker', DatetimePicker);
+Vue.component('date-range-picker', DateRangePicker);
 
 // Local register
 new Vue({
-  components:{Datepicker, Timepicker, DatetimePicker}
+  components:{ Datepicker, Timepicker, DatetimePicker, DateRangePicker }
 })
 ```
 
@@ -58,7 +59,6 @@ new Vue({
 <script src="https://unpkg.com/@livelybone/vue-datepicker/lib/umd/<--module-->.js"></script>
 ```
 
-
 ## Props
 
 ### Common
@@ -66,7 +66,7 @@ new Vue({
 | ------------------------- | ----------------------------------------- | -------------------------------------------- | ------------ |
 | `id`                      | `[String, Number]`                        | none                                         |  |
 | `value`                   | `[String, Number]`                        | none                                         |  |
-| `placeholder`             | `String`                                  | none                                         |  |
+| `placeholder`             | `String`                                  | `请选择`                                         |  |
 | `min`                     | `String`                                  | none                                         | Min |
 | `max`                     | `String`                                  | none                                         | Max |
 | `canEdit`                 | `Boolean`                                 | `true`                                       | If it can be changed |
@@ -87,13 +87,18 @@ const defaultPopperProps = {
 ```
 
 ### Datepicker
-| Name          | Type         | DefaultValue                                 | Description  |
-| ------------- | ------------ | -------------------------------------------- | ------------ |
-| `dayStr`      | `Array`      | `['日', '一', '二', '三', '四', '五', '六']`   | Used to set day name |
+| Name                | Type         | DefaultValue                                 | Description  |
+| ------------------- | ------------ | -------------------------------------------- | ------------ |
+| `dayStr`            | `Array`      | `['日', '一', '二', '三', '四', '五', '六']`   | Used to set day name |
+| `multiple`          | `Boolean`    | `false`                                      |  |
+| `type`              | `String`     | `date`                                       | Options: [`year`,`month`,`date`] |
+| `firstDayOfWeek`    | `Number`     | `0`                                          | Used to set the first day of week. Options: [0, 1, 2, 3, 4, 5, 6] |
+| `btnStr`            | `String`     | `确定`                                        | Used to set text of button |
 
 ### Timepicker
 | Name              | Type                   | DefaultValue                                 | Description  |
 | ----------------- | ---------------------- | -------------------------------------------- | ------------ |
+| `type`            | `String`               | `second`                                     | Options: [`hour`,`minute`,`second`] |
 | `timeStr`         | `Array`                | `['时', '分', '秒']`                          | Used to set time name |
 | `btnStr`          | `String`               | `确定`                                        | Used to set text of button |
 
@@ -103,6 +108,18 @@ const defaultPopperProps = {
 | `dayStr`          | `Array`                | `['日', '一', '二', '三', '四', '五', '六']`   | Used to set day name |
 | `timeStr`         | `Array`                | `['时', '分', '秒']`                          | Used to set time name |
 | `btnStr`          | `String`               | `确定`                                        | Used to set text of button |
+| `firstDayOfWeek`  | `Number`               | `0`                                          | Used to set the first day of week. Options: [0, 1, 2, 3, 4, 5, 6] |
+| `timeType`        | `String`               | `second`                                     | Options: [`hour`,`minute`,`second`] |
+
+### DateRangePicker
+| Name                  | Type                   | DefaultValue                                 | Description  |
+| --------------------- | ---------------------- | -------------------------------------------- | ------------ |
+| `value`               | `Array`                | `[null, null]`                               | Used to set day name |
+| `dayStr`              | `Array`                | `['日', '一', '二', '三', '四', '五', '六']`   | Used to set day name |
+| `btnStr`              | `String`               | `确定`                                        | Used to set text of button |
+| `firstDayOfWeek`      | `Number`               | `0`                                          | Used to set the first day of week. Options: [0, 1, 2, 3, 4, 5, 6] |
+| `secondPlaceholder`   | `String`               | `请选择结束`                                   |  |
+| `rangeSeparator`      | `String`               | `至`                                          |  |
 
 ## Events
 | Name                  | EmittedData           | Description                                       |
