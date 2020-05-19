@@ -64,6 +64,7 @@ new Vue({
   template: '<datepicker' +
     ' :value="date"' +
     ' @input="log"' +
+    ' @error="log"' +
     ' min="2018-6-1"' +
     ' max="2020-01-01"' +
     // ' type="year"' +
@@ -93,6 +94,7 @@ new Vue({
   template: '<date-range-picker' +
     ' :value="date"' +
     ' @input="log"' +
+    ' @error="log"' +
     ' min="2018-6-1"' +
     ' max="2020-01-01"' +
     ' :dayStr="dayStr"' +
@@ -120,6 +122,7 @@ new Vue({
   template: '<timepicker' +
     ' :value="time"' +
     ' @input="log"' +
+    ' @error="log"' +
     ' min="02:10:02"' +
     ' max="22:10:00"' +
     ' :timeStr="timeStr"' +
@@ -147,6 +150,7 @@ new Vue({
   template: '<datetime-picker' +
     ' :value="time"' +
     ' @input="log"' +
+    ' @error="log"' +
     ' min="2018-08-24 02:10:02"' +
     ' max="2020-09-1 22:10:00"' +
     ' :timeStr="timeStr"' +

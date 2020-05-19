@@ -62,10 +62,8 @@ export default {
     hide(hide = true) {
       if (typeof hide === 'object') {
         const { target } = hide
-        if (
-          target &&
-          (!this.$refs.clear || !this.$refs.clear.contains(target))
-        ) {
+        const { clear } = this.$refs.inputEl.$refs
+        if (target && (!clear || !clear.contains(target))) {
           this.showPicker = this.$refs.wrap.contains(target)
         }
       } else if (!hide) {
@@ -82,7 +80,7 @@ export default {
       })
     },
     onClear() {
-      this.blur('', false)
+      this.blur({ target: { value: '' } })
     },
   },
   components: { popper: VuePopper },

@@ -38,14 +38,7 @@
           @chose="chose"
         />
         <div class="btns">
-          <span
-            class="btn btn-sure"
-            @click="
-              $emit('input', myValue)
-              hide()
-            "
-            >{{ $btnStr }}</span
-          >
+          <span class="btn btn-sure" @click="confirm">{{ $btnStr }}</span>
         </div>
       </div>
     </popper>
@@ -153,6 +146,10 @@ export default {
     },
     chose(val) {
       this.timeObj = val
+    },
+    confirm() {
+      this.$emit('input', this.myValue)
+      this.hide()
     },
   },
   components: { TimePin, IconTime, InputEl },

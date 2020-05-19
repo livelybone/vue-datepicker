@@ -26,7 +26,7 @@
         :class="{
           disabled: !item.canBeChose,
           [i]: true,
-          selected: +item.value === +timeObj[i],
+          selected: isSelected(item, i),
         }"
         :key="i + '' + j"
         @click="chose(item, i)"
@@ -43,7 +43,6 @@ import {
   getHour,
   getMinute,
   getSecond,
-  parseTime,
 } from '@livelybone/date-generator'
 import { createNowTimeObj, formatTimeObj, timeCompare } from './utils'
 
@@ -80,45 +79,31 @@ export default {
       if (this.myType === 'minute') return arr.slice(0, 2)
       return arr.slice(0, 3)
     },
-    minT() {
-      return {
-        ...{ hour: 0, minute: 0, second: 0 },
-        ...(typeof this.minTime === 'string'
-          ? parseTime(this.minTime)
-          : this.minTime),
-      }
-    },
-    maxT() {
-      return {
-        ...{ hour: 23, minute: 59, second: 59 },
-        ...(typeof this.maxTime === 'string'
-          ? parseTime(this.maxTime)
-          : this.maxTime),
-      }
-    },
     hours() {
       return getHour({
-        min: this.minT.hour,
-        max: this.maxT.hour,
+        min: this.minTime.hour,
+        max: this.maxTime.hour,
       })
     },
     minutes() {
       return getMinute({
-        min: +this.timeObj.hour === +this.minT.hour ? this.minT.minute : 0,
-        max: +this.timeObj.hour === +this.maxT.hour ? this.maxT.minute : 59,
+        min:
+          +this.timeObj.hour === +this.minTime.hour ? this.minTime.minute : 0,
+        max:
+          +this.timeObj.hour === +this.maxTime.hour ? this.maxTime.minute : 59,
       })
     },
     seconds() {
       return getSecond({
         min:
-          +this.timeObj.hour === +this.minT.hour &&
-          +this.timeObj.minute === +this.minT.minute
-            ? this.minT.second
+          +this.timeObj.hour === +this.minTime.hour &&
+          +this.timeObj.minute === +this.minTime.minute
+            ? this.minTime.second
             : 0,
         max:
-          +this.timeObj.hour === +this.maxT.hour &&
-          +this.timeObj.minute === +this.maxT.minute
-            ? this.maxT.second
+          +this.timeObj.hour === +this.maxTime.hour &&
+          +this.timeObj.minute === +this.maxTime.minute
+            ? this.maxTime.second
             : 59,
       })
     },
@@ -146,24 +131,24 @@ export default {
   watch: {
     'timeObj.hour': {
       handler() {
-        if (!timeCompare(this.timeObj, this.minT, 1, 'minute'))
-          this.timeObj.minute = fillTo(2, this.minT.minute)
-        else if (!timeCompare(this.timeObj, this.maxT, -1, 'minute'))
-          this.timeObj.minute = fillTo(2, this.maxT.minute)
-        else if (!timeCompare(this.timeObj, this.minT))
-          this.timeObj.second = fillTo(2, this.minT.second)
-        else if (!timeCompare(this.timeObj, this.maxT, -1))
-          this.timeObj.second = fillTo(2, this.maxT.second)
+        if (!timeCompare(this.timeObj, this.minTime, 1, 'minute'))
+          this.timeObj.minute = fillTo(2, this.minTime.minute)
+        else if (!timeCompare(this.timeObj, this.maxTime, -1, 'minute'))
+          this.timeObj.minute = fillTo(2, this.maxTime.minute)
+        else if (!timeCompare(this.timeObj, this.minTime))
+          this.timeObj.second = fillTo(2, this.minTime.second)
+        else if (!timeCompare(this.timeObj, this.maxTime, -1))
+          this.timeObj.second = fillTo(2, this.maxTime.second)
         else this.$emit('chose', { type: 'hour', ...this.timeObj })
         this.$forceUpdate()
       },
     },
     'timeObj.minute': {
       handler() {
-        if (!timeCompare(this.timeObj, this.minT))
-          this.timeObj.second = fillTo(2, this.minT.second)
-        else if (!timeCompare(this.timeObj, this.maxT, -1))
-          this.timeObj.second = fillTo(2, this.maxT.second)
+        if (!timeCompare(this.timeObj, this.minTime))
+          this.timeObj.second = fillTo(2, this.minTime.second)
+        else if (!timeCompare(this.timeObj, this.maxTime, -1))
+          this.timeObj.second = fillTo(2, this.maxTime.second)
         else this.$emit('chose', { type: 'minute', ...this.timeObj })
         this.$forceUpdate()
       },
@@ -195,6 +180,9 @@ export default {
           }
         })
       })
+    },
+    isSelected(item, type) {
+      return this.selectedTime && this.selectedTime[type] === item.value
     },
   },
   components: { scrollbar: VueScrollbar },

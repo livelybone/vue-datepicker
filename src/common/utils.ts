@@ -186,15 +186,15 @@ export function formatDate(d: DateInfoBase, type: TAllTypes = 'date') {
   if (!d) return ''
 
   const arr = []
-  const year = $fillTo(4, d.year)
+  const year = d.year && $fillTo(4, d.year)
   if (year) {
     arr.push(year)
 
-    const month = $fillTo(2, d.month)
+    const month = d.month && $fillTo(2, d.month)
     if (month) {
       arr.push(month)
 
-      const date = $fillTo(2, d.date)
+      const date = d.date && $fillTo(2, d.date)
       if (date) arr.push(date)
     }
   }
@@ -206,15 +206,15 @@ export function formatTime(t: TimeInfo, type: TAllTimeTypes = 'second') {
   if (!t) return ''
 
   const arr = []
-  const hour = $fillTo(2, t.hour)
+  const hour = t.hour && $fillTo(2, t.hour)
   if (hour) {
     arr.push(hour)
 
-    const minute = $fillTo(2, t.minute)
+    const minute = t.minute && $fillTo(2, t.minute)
     if (minute) {
       arr.push(minute)
 
-      const second = $fillTo(2, t.second)
+      const second = t.second && $fillTo(2, t.second)
       if (second) arr.push(second)
     }
   }
@@ -459,6 +459,8 @@ export function timeValidator(
 }
 
 export function parseDatetime(val: string) {
+  if (!val.trim()) return null
+
   const arr = val.trim().split(/\s+/)
   return {
     ...parseDate(arr[0]),

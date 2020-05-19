@@ -48,7 +48,7 @@
           :minTime="limit.minTime"
           :maxTime="limit.maxTime"
           :timeStr="timeStr"
-          @input="chose({ value: $event })"
+          @chose="chose({ value: $event })"
         />
         <div class="btns" slot="btn">
           <span

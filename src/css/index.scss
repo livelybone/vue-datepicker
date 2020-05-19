@@ -107,6 +107,7 @@ $picker-item-selected-before-height: size(2.4);
     display: block;
     height: 100%;
     flex: 1;
+    padding: 0;
     border: none;
 
     &::placeholder {
