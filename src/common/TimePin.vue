@@ -52,8 +52,8 @@ export default {
     selectedTime: Object,
     type: String,
     scrollbarProps: Object,
-    minTime: String,
-    maxTime: String,
+    minTime: Object,
+    maxTime: Object,
     timeStr: Array,
   },
   data() {

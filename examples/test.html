@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>vue-datepicker</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
   <script>
   function isMobile(ua) {
     if (!ua && typeof navigator != 'undefined')
@@ -19,6 +19,7 @@
   }
   </script>
   <script src="../lib/umd/index.js"></script>
+<!--  <script src="https://cdn.jsdelivr.net/npm/@livelybone/vue-datepicker@3.1.0"></script>-->
   <link rel="stylesheet" href="../lib/css/index.css">
   <style>
   body {
@@ -62,6 +63,7 @@ var popperProps = {
 new Vue({
   el: '#datepicker',
   template: '<datepicker' +
+    ' placeholder="YYYY-MM-DD"' +
     ' :value="date"' +
     ' @input="log"' +
     ' @error="log"' +
@@ -77,6 +79,7 @@ new Vue({
     return {
       dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       date: '',
+      isM: isM,
       popperProps: popperProps,
     }
   },
@@ -105,6 +108,7 @@ new Vue({
     return {
       dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       date: ['2018-06-01'],
+      isM: isM,
       popperProps: popperProps,
     }
   },

@@ -46,7 +46,7 @@ export default {
     id: String,
     type: String,
     value: Array,
-    placeholder: Array,
+    placeholder: String,
     secondPlaceholder: String,
     inputStyle: Object,
     dayStr: Array,
