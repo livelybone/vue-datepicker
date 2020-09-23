@@ -36,7 +36,7 @@
   }
   </style>
 </head>
-<body style="padding:100vh 20px; margin: 0">
+<body style="padding:20px; margin: 0">
 <div id="datepicker"></div>
 <div id="daterangepicker"></div>
 <div id="timepicker"></div>
@@ -68,16 +68,18 @@ new Vue({
     ' @input="log"' +
     ' @error="log"' +
     ' min="2018-6-1"' +
-    ' max="2020-01-01"' +
+    ' max="2025-01-01"' +
     // ' type="year"' +
     ' :multiple="true"' +
     ' :dayStr="dayStr"' +
+    ' :monthStr="monthStr"' +
     ' :popperProps="popperProps"' +
     ' :scrollbarProps="{isMobile:isM}"' +
     ' :firstDayOfWeek="1"/>',
   data: function () {
     return {
       dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      monthStr: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       date: '',
       isM: isM,
       popperProps: popperProps,
@@ -99,14 +101,16 @@ new Vue({
     ' @input="log"' +
     ' @error="log"' +
     ' min="2018-6-1"' +
-    ' max="2020-01-01"' +
+    ' max="2025-01-01"' +
     ' :dayStr="dayStr"' +
+    ' :monthStr="monthStr"' +
     ' :popperProps="popperProps"' +
     ' :scrollbarProps="{isMobile:isM}"' +
     ' :firstDayOfWeek="1"/>',
   data: function () {
     return {
       dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      monthStr: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
       date: ['2018-06-01'],
       isM: isM,
       popperProps: popperProps,
@@ -156,7 +160,7 @@ new Vue({
     ' @input="log"' +
     ' @error="log"' +
     ' min="2018-08-24 02:10:02"' +
-    ' max="2020-09-1 22:10:00"' +
+    ' max="2025-09-1 22:10:00"' +
     ' :timeStr="timeStr"' +
     ' :scrollbarProps="{isMobile:isM}"' +
     ' :popperProps="popperProps"/>',

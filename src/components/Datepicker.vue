@@ -34,6 +34,7 @@
         :minDate="limit.minDate"
         :maxDate="limit.maxDate"
         :dayStr="dayStr"
+        :monthStr="monthStr"
         :firstDayOfWeek="firstDayOfWeek"
         :tenYears="tenYears"
         @itemSelected="chose"
@@ -68,6 +69,7 @@ export default {
     multiple: Boolean,
     type: String,
     dayStr: Array,
+    monthStr: Array,
     firstDayOfWeek: Number,
     btnStr: String,
   },

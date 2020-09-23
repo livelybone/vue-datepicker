@@ -90,6 +90,7 @@ const defaultPopperProps = {
 | Name                | Type         | DefaultValue                                 | Description  |
 | ------------------- | ------------ | -------------------------------------------- | ------------ |
 | `dayStr`            | `Array`      | `['日', '一', '二', '三', '四', '五', '六']`   | Used to set day name |
+| `monthStr`          | `Array`      | `['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']`   | Used to set day name |
 | `multiple`          | `Boolean`    | `false`                                      |  |
 | `type`              | `String`     | `date`                                       | Options: [`year`,`month`,`date`] |
 | `firstDayOfWeek`    | `Number`     | `0`                                          | Used to set the first day of week. Options: [0, 1, 2, 3, 4, 5, 6] |
@@ -106,6 +107,7 @@ const defaultPopperProps = {
 | Name              | Type                   | DefaultValue                                 | Description  |
 | ----------------- | ---------------------- | -------------------------------------------- | ------------ |
 | `dayStr`          | `Array`                | `['日', '一', '二', '三', '四', '五', '六']`   | Used to set day name |
+| `monthStr`        | `Array`                | `['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']`   | Used to set day name |
 | `timeStr`         | `Array`                | `['时', '分', '秒']`                          | Used to set time name |
 | `btnStr`          | `String`               | `确定`                                        | Used to set text of button |
 | `firstDayOfWeek`  | `Number`               | `0`                                          | Used to set the first day of week. Options: [0, 1, 2, 3, 4, 5, 6] |
@@ -116,6 +118,7 @@ const defaultPopperProps = {
 | --------------------- | ---------------------- | -------------------------------------------- | ------------ |
 | `value`               | `Array`                | `[null, null]`                               | Used to set day name |
 | `dayStr`              | `Array`                | `['日', '一', '二', '三', '四', '五', '六']`   | Used to set day name |
+| `monthStr`            | `Array`                | `['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']`   | Used to set day name |
 | `btnStr`              | `String`               | `确定`                                        | Used to set text of button |
 | `firstDayOfWeek`      | `Number`               | `0`                                          | Used to set the first day of week. Options: [0, 1, 2, 3, 4, 5, 6] |
 | `secondPlaceholder`   | `String`               | `请选择结束`                                   |  |

@@ -33,6 +33,7 @@
         :minDate="limit.minDate"
         :maxDate="limit.maxDate"
         :dayStr="dayStr"
+        :monthStr="monthStr"
         :firstDayOfWeek="firstDayOfWeek"
         @itemSelected="chose"
         @typeChange="typeChange"
@@ -87,6 +88,7 @@ export default {
   name: 'DatetimePicker',
   props: {
     dayStr: Array,
+    monthStr: Array,
     firstDayOfWeek: Number,
     timeStr: Array,
     btnStr: String,

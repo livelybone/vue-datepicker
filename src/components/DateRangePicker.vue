@@ -37,6 +37,7 @@
         :minDate="limit.minDate"
         :maxDate="firstMaxDate"
         :dayStr="dayStr"
+        :monthStr="monthStr"
         :firstDayOfWeek="firstDayOfWeek"
         :isRange="true"
         @itemSelected="chose(0, $event)"
@@ -51,6 +52,7 @@
         :minDate="lastMinDate"
         :maxDate="limit.maxDate"
         :dayStr="dayStr"
+        :monthStr="monthStr"
         :firstDayOfWeek="firstDayOfWeek"
         :isRange="true"
         @itemSelected="chose(1, $event)"
@@ -87,6 +89,7 @@ export default {
     value: Array,
     secondPlaceholder: String,
     dayStr: Array,
+    monthStr: Array,
     firstDayOfWeek: Number,
     rangeSeparator: String,
   },
