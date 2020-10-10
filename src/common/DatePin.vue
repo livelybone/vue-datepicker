@@ -42,6 +42,7 @@
       :minDate="minDate"
       :maxDate="maxDate"
       :dayStr="dayStr"
+      :monthStr="monthStr"
       :firstDayOfWeek="firstDayOfWeek"
       :selectedDates="selectedDates"
       :isRange="isRange"

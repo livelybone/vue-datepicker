@@ -20,7 +20,7 @@
         :key="i + '' + j"
         @click="chose(item)"
         @mouseover="item.canBeChose && $emit('mouseover', item)"
-        >{{ item[type] }}</span
+        >{{ renderItem(type, item[type]) }}</span
       >
     </div>
   </div>
@@ -55,6 +55,7 @@ export default {
     minDate: Object,
     maxDate: Object,
     dayStr: Array,
+    monthStr: Array,
     selectedDates: Array,
     isRange: Boolean,
     firstDayOfWeek: {
@@ -78,6 +79,28 @@ export default {
       return dayStr
         .slice(this.firstDayOfWeek)
         .concat(dayStr.slice(0, this.firstDayOfWeek))
+    },
+    $monthStr() {
+      const monthStr =
+        !this.monthStr ||
+        this.monthStr.length < 12 ||
+        this.monthStr.some(month => typeof month !== 'string')
+          ? [
+              '01',
+              '02',
+              '03',
+              '04',
+              '05',
+              '06',
+              '07',
+              '08',
+              '09',
+              '10',
+              '11',
+              '12',
+            ]
+          : this.monthStr.slice(0, 12)
+      return monthStr
     },
     years() {
       if (!this.dateObj.year) return []
@@ -202,6 +225,12 @@ export default {
         if (this.dateObj.canBeChose)
           this.$emit('to', { type: 'date', ...this.dateObj })
       }
+    },
+    renderItem(type, itemValue) {
+      if (type === 'month') {
+        return this.$monthStr[+itemValue - 1]
+      }
+      return itemValue
     },
   },
 }
