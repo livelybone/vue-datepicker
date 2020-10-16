@@ -459,9 +459,11 @@ export function timeValidator(
 }
 
 export function parseDatetime(val: string) {
-  if (!val.trim()) return null
+  const $val = val || ''
 
-  const arr = val.trim().split(/\s+/)
+  if (!$val.trim()) return null
+
+  const arr = $val.trim().split(/\s+/)
   return {
     ...parseDate(arr[0]),
     ...parseTime(arr[1]),
