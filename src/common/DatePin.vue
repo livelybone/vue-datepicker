@@ -106,18 +106,20 @@ export default {
       })
     },
     selected(val) {
-      triggerAfterClickEvent(() => {
-        const index = Object.keys(this.availableTypes).find(
-          i => this.availableTypes[i] === val.type,
-        )
-        const nextType = this.availableTypes[+index + 1]
-        this.$emit('itemSelected', {
-          value: val,
-          currType: this.currType,
-          nextType,
+      if (val.type !== 'ten-year') {
+        triggerAfterClickEvent(() => {
+          const index = Object.keys(this.availableTypes).find(
+            i => this.availableTypes[i] === val.type,
+          )
+          const nextType = this.availableTypes[+index + 1]
+          this.$emit('itemSelected', {
+            value: val,
+            currType: this.currType,
+            nextType,
+          })
+          this.currType = nextType || this.currType
         })
-        this.currType = nextType || this.currType
-      })
+      }
     },
     pageChange(item) {
       this.currDateObj = item.currObj
