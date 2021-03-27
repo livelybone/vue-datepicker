@@ -18,7 +18,7 @@
         <template v-if="currType === 'date' || currType === 'time'">
           &nbsp;-&nbsp;
           <span class="month" @click="choseHeadType('month')">{{
-            currDateObj.month
+            renderMonth(currDateObj.month)
           }}</span>
         </template>
         <template v-if="currType === 'time'">
@@ -42,6 +42,7 @@
       :minDate="minDate"
       :maxDate="maxDate"
       :dayStr="dayStr"
+      :monthStr="monthStr"
       :firstDayOfWeek="firstDayOfWeek"
       :selectedDates="selectedDates"
       :isRange="isRange"
@@ -73,6 +74,7 @@ export default {
     selectedDates: Array,
     isRange: Boolean,
     dayStr: Array,
+    monthStr: Array,
     firstDayOfWeek: Number,
   },
   data() {
@@ -83,6 +85,30 @@ export default {
       currDateObj: {},
       tenYears: '',
     }
+  },
+  computed: {
+    $monthStr() {
+      const monthStr =
+        !this.monthStr ||
+        this.monthStr.length < 12 ||
+        this.monthStr.some(month => typeof month !== 'string')
+          ? [
+              '01',
+              '02',
+              '03',
+              '04',
+              '05',
+              '06',
+              '07',
+              '08',
+              '09',
+              '10',
+              '11',
+              '12',
+            ]
+          : this.monthStr.slice(0, 12)
+      return monthStr
+    },
   },
   watch: {
     type: {
@@ -125,6 +151,9 @@ export default {
       this.currDateObj = item.currObj
       this.tenYears = getTenYears(item.currObj)
       this.$emit('pageChange', item)
+    },
+    renderMonth(monthValue) {
+      return this.$monthStr[+monthValue - 1]
     },
   },
   components: { Date },
