@@ -68,9 +68,9 @@ new Vue({
     ' @input="log"' +
     ' @error="log"' +
     ' min="2018-6-1"' +
-    ' max="2025-01-01"' +
+    ' max="2040-01-01"' +
     // ' type="year"' +
-    ' :multiple="true"' +
+    // ' :multiple="true"' +
     ' :dayStr="dayStr"' +
     ' :monthStr="monthStr"' +
     ' :popperProps="popperProps"' +
@@ -80,7 +80,7 @@ new Vue({
     return {
       dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       monthStr: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      date: '',
+      date: '2018-6-1',
       isM: isM,
       popperProps: popperProps,
     }
@@ -160,7 +160,7 @@ new Vue({
     ' @input="log"' +
     ' @error="log"' +
     ' min="2018-08-24 02:10:02"' +
-    ' max="2025-09-1 22:10:00"' +
+    ' max="2040-09-1 22:10:00"' +
     ' :timeStr="timeStr"' +
     ' :scrollbarProps="{isMobile:isM}"' +
     ' :popperProps="popperProps"/>',
