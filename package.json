@@ -1,7 +1,7 @@
 {
   "name": "@livelybone/vue-datepicker",
-  "version": "4.0.3",
-  "description": "A vue component of datepicker, includes DatePicker, DatetimePicker, DateRangePicker, TimePicker",
+  "version": "4.1.0",
+  "description": "A vue component of datepicker, includes DatePicker, DateRangePicker, DatetimePicker, DateRangePicker, TimePicker",
   "main": "./lib/umd/index.js",
   "module": "./lib/es/index.js",
   "unpkg": "./lib/umd/index.js",
@@ -24,6 +24,7 @@
   },
   "keywords": [
     "DatePicker",
+    "DateRangePicker",
     "DatetimePicker",
     "TimePicker",
     "DateRangePicker"

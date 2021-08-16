@@ -66,6 +66,14 @@ declare class Datepicker extends CommonProps {
    * */
   dayStr?: string[]
 
+  /**
+   * Used to set month name
+   *
+   * Default to:
+   * `['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']`
+   * */
+  monthStr?: string[]
+
   firstDayOfWeek?: GntCalendarOptions['firstDayOfWeek']
 
   multiple: boolean
@@ -95,6 +103,14 @@ declare class DateRangePicker extends CommonProps {
    * ['日', '一', '二', '三', '四', '五', '六']
    * */
   dayStr?: string[]
+
+  /**
+   * Used to set month name
+   *
+   * Default to:
+   * `['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']`
+   * */
+  monthStr?: string[]
 
   firstDayOfWeek?: GntCalendarOptions['firstDayOfWeek']
 
@@ -137,6 +153,14 @@ declare class DatetimePicker extends CommonProps {
    * Default to: ['日', '一', '二', '三', '四', '五', '六']
    * */
   dayStr?: string[]
+
+  /**
+   * Used to set month name
+   *
+   * Default to:
+   * `['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']`
+   * */
+  monthStr?: string[]
 
   firstDayOfWeek?: GntCalendarOptions['firstDayOfWeek']
 

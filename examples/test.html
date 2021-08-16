@@ -162,11 +162,13 @@ new Vue({
     ' min="2018-08-24 02:10:02"' +
     ' max="2040-09-1 22:10:00"' +
     ' :timeStr="timeStr"' +
+    ' :monthStr="monthStr"' +
     ' :scrollbarProps="{isMobile:isM}"' +
     ' :popperProps="popperProps"/>',
   data: function () {
     console.log('datetime-picker')
     return {
+      monthStr: ['jan', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
       timeStr: ['hour', 'min', 'sec'],
       time: '2019-02-01 01:02:01',
       isM: isM,
