@@ -5,7 +5,7 @@
       :id="id"
       :value="value"
       :placeholder="placeholder || '请选择开始'"
-      :secondPlaceholder="placeholder || '请选择结束'"
+      :secondPlaceholder="secondPlaceholder || '请选择结束'"
       :readonly="!canEdit || isMobile"
       :inputStyle="inputStyle"
       :rangeSeparator="rangeSeparator"
@@ -198,10 +198,16 @@ export default {
       }
     },
     updateMin({ currObj }) {
-      this.lastMinDate = getLastMinDate(currObj, this.type)
+      const minDate = getLastMinDate(currObj, this.type)
+      this.firstMaxDate = dateCompare(minDate, this.limit.minDate)
+        ? minDate
+        : this.limit.minDate
     },
     updateMax({ currObj }) {
-      this.firstMaxDate = getFirstMaxDate(currObj, this.type)
+      const maxDate = getFirstMaxDate(currObj, this.type)
+      this.firstMaxDate = dateCompare(maxDate, this.limit.maxDate)
+        ? this.limit.maxDate
+        : maxDate
     },
     tempSelectedDatesChange() {
       this.$nextTick(() => {
@@ -215,13 +221,7 @@ export default {
       })
     },
     chose(i, { value, nextType }) {
-      if (
-        value.type &&
-        !nextType &&
-        this.tempSelectedDates.every(
-          it => formatDate(it, this.type) !== formatDate(value, this.type),
-        )
-      ) {
+      if (value.type && !nextType) {
         if (this.tempSelectedDates.every(Boolean)) {
           this.tempSelectedDates = [null, null]
         }
