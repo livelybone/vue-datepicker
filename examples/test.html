@@ -38,6 +38,7 @@
 </head>
 <body style="padding:20px; margin: 0">
 <div id="datepicker"></div>
+<div id="datepicker1"></div>
 <div id="daterangepicker"></div>
 <div id="timepicker"></div>
 <div id="datetime-picker"></div>
@@ -62,6 +63,40 @@ var popperProps = {
 
 new Vue({
   el: '#datepicker',
+  template: '<datepicker' +
+    ' placeholder="YYYY-MM-DD"' +
+    ' :value="date"' +
+    ' @input="log"' +
+    ' @error="log"' +
+    ' min="2018-6-1"' +
+    ' max="2040-01-01"' +
+    // ' type="year"' +
+    // ' :multiple="true"' +
+    ' :dayStr="dayStr"' +
+    ' :monthStr="monthStr"' +
+    ' :popperProps="popperProps"' +
+    ' :scrollbarProps="{isMobile:isM}"' +
+    ' :firstDayOfWeek="1"/>',
+  data: function () {
+    return {
+      dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      monthStr: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      date: '2018-6-1',
+      isM: isM,
+      popperProps: popperProps,
+    }
+  },
+  methods: {
+    log: function (val) {
+      this.date = val
+      console.log(val)
+    },
+  },
+  components: { 'datepicker': VueDatepicker.Datepicker },
+})
+
+new Vue({
+  el: '#datepicker1',
   template: '<datepicker' +
     ' placeholder="YYYY-MM-DD"' +
     ' :value="date"' +
