@@ -63,7 +63,9 @@ var popperProps = {
 
 new Vue({
   el: '#datepicker',
-  template: '<datepicker' +
+  template:
+    '<div>' +
+    '<datepicker' +
     ' placeholder="YYYY-MM-DD"' +
     ' :value="date"' +
     ' @input="log"' +
@@ -76,7 +78,22 @@ new Vue({
     ' :monthStr="monthStr"' +
     ' :popperProps="popperProps"' +
     ' :scrollbarProps="{isMobile:isM}"' +
-    ' :firstDayOfWeek="1"/>',
+    ' :firstDayOfWeek="1"/>' +
+    '<datepicker' +
+    ' placeholder="YYYY-MM-DD"' +
+    ' :value="date"' +
+    ' @input="log"' +
+    ' @error="log"' +
+    ' min="2018-6-1"' +
+    ' max="2040-01-01"' +
+    // ' type="year"' +
+    // ' :multiple="true"' +
+    ' :dayStr="dayStr"' +
+    ' :monthStr="monthStr"' +
+    ' :popperProps="popperProps"' +
+    ' :scrollbarProps="{isMobile:isM}"' +
+    ' :firstDayOfWeek="1"/>' +
+    '</div>',
   data: function () {
     return {
       dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
