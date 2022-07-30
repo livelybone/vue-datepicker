@@ -199,7 +199,7 @@ export default {
     },
     updateMin({ currObj }) {
       const minDate = getLastMinDate(currObj, this.type)
-      this.firstMaxDate = dateCompare(minDate, this.limit.minDate)
+      this.lastMinDate = dateCompare(minDate, this.limit.minDate)
         ? minDate
         : this.limit.minDate
     },
