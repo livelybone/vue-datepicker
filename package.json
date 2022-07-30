@@ -1,6 +1,6 @@
 {
   "name": "@livelybone/vue-datepicker",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "A vue component of datepicker, includes DatePicker, DateRangePicker, DatetimePicker, DateRangePicker, TimePicker",
   "main": "./lib/umd/index.js",
   "module": "./lib/es/index.js",
@@ -17,7 +17,9 @@
     "test": "cross-env BABEL_ENV=test karma start --single-run",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "prepublishOnly": "npm run build && npm run eslint",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "release": "npm publish --registry=https://registry.npmjs.org",
+    "release:alpha": "npm publish --tag alpha --registry=https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",

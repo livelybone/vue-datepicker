@@ -225,6 +225,8 @@ export default {
         if (this.tempSelectedDates.every(Boolean)) {
           this.tempSelectedDates = [null, null]
         }
+        this.tempSelectedDates = this.tempSelectedDates.filter(Boolean)
+        this.tempSelectedDates.length = 2
         const index = this.tempSelectedDates[i] ? (i + 1) % 2 : i
         this.tempSelectedDates[index] = value
         this.tempSelectedDates = [...this.tempSelectedDates]
